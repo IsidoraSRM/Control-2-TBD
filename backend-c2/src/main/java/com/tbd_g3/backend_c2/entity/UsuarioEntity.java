@@ -18,8 +18,8 @@ public class UsuarioEntity {
     @Column(name = "nombreusuario", nullable = false)
     private String nombreUsuario;
 
-    @Column(name = "contraseña", nullable = false)
-    private String contraseña;
+    @Column(name = "contrasena", nullable = false)
+    private String contrasena;
 
     @Column(name = "correo", nullable = false, unique = true)
     private String correo;
@@ -29,5 +29,8 @@ public class UsuarioEntity {
 
     @Column(name = "fecharegistro")
     private LocalDateTime fechaRegistro;
+
+    @Column(name = "rol")
+    private String rol;
 }
 
