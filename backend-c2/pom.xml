@@ -56,6 +56,12 @@
 			<artifactId>jts-core</artifactId>
 			<version>1.18.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geolatte</groupId>
+			<artifactId>geolatte-geom</artifactId>
+			<version>1.8.2</version>  <!-- O la versión que estés usando -->
+		</dependency>
+
 
 		<!-- Spring security -->
 		<dependency>
