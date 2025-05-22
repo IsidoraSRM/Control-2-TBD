@@ -25,6 +25,12 @@ public class TareaService {
     public TareaEntity getTareaById(int id) {
         return tareaRepository.findById(id).orElse(null);
     }
+
+    //crear una tarea
+    public void saveTarea(TareaEntity tarea) {
+        tareaRepository.save(tarea);
+    }
+
     //actualizar la tarea
     public void updateTarea(TareaEntity tarea) throws Exception {
         try{
@@ -35,9 +41,9 @@ public class TareaService {
         }
     }
     //eliminar la tarea
-    public void deleteTarea(TareaEntity tarea) throws Exception {
+    public void deleteTarea(int id) throws Exception {
         try {
-            tareaRepository.delete(tarea);
+            tareaRepository.delete(tareaRepository.findById(id).orElse(null));
         }
         catch(Exception e){
             throw new Exception("Error al eliminar la tarea");
