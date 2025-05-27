@@ -77,6 +77,32 @@ public class TareaController {
         return ResponseEntity.ok(tarea);
     }
 
+    @GetMapping("/sectores-pendientes")
+    public ResponseEntity<List<Object[]>> getSectoresConMasTareasPendientes() {
+        List<Object[]> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
+        if (sectores.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(sectores);
+    }
 
+    @GetMapping("/pendiente-cercana/{idUsuario}")
+    @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
+    public ResponseEntity<Object[]> getTareaPendienteMasCercana(@PathVariable Integer idUsuario) {
+        Object[] tarea = tareaService.encontrarTareaPendienteMasCercana(idUsuario);
+        if (tarea == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(tarea);
+    }
+
+    @GetMapping("/promedio-distancia/{idUsuario}")
+    @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
+    public ResponseEntity<Object[]> getPromedioDistanciaTareasCompletadas(@PathVariable Integer idUsuario) {
+        Object[] promedio = tareaService.obtenerPromedioDistanciaTareasCompletadas(idUsuario);
+        if (promedio == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(promedio);
+    }
 }
-

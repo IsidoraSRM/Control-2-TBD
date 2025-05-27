@@ -114,8 +114,22 @@ public class TareaService {
         return dto;
     }
 
+    // ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
+    public List<Object[]> obtenerSectoresConMasTareasPendientes() {
+        return tareaRepository.findSectoresConMasTareasPendientes();
+    }
 
+    // ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
+    public Object[] encontrarTareaPendienteMasCercana(Integer idUsuario) {
+        List<Object[]> resultados = tareaRepository.findTareaPendienteMasCercana(idUsuario);
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
 
+    //
+    public Object[] obtenerPromedioDistanciaTareasCompletadas(Integer idUsuario) {
+        List<Object[]> resultados = tareaRepository.findPromedioDistanciaTareasCompletadas(idUsuario);
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
 
 
 
