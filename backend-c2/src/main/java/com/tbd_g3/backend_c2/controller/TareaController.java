@@ -105,4 +105,23 @@ public class TareaController {
         }
         return ResponseEntity.ok(promedio);
     }
+
+    @GetMapping("/promedio-global-distancia-tareas-completadas")
+    public ResponseEntity<Double> getPromedioGlobalDistanciaTareasCompletadas() {
+        Double promedio = tareaService.obtenerPromedioGlobalDistanciaTareasCompletadas();
+        if (promedio == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(promedio);
+    }
+
+    @GetMapping("/cantidad-tareas-por-usuario-por-sector")
+    public ResponseEntity<List<Object[]>> getCantidadTareasPorUsuarioPorSector() {
+        List<Object[]> resultados = tareaService.obtenerCantidadTareasPorUsuarioPorSector();
+        if (resultados.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(resultados);
+    }
+
 }

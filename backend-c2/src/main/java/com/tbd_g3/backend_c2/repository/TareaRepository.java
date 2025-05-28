@@ -110,5 +110,43 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
             u.id_usuario, u.nombre_usuario
         """, nativeQuery = true)
     List<Object[]> findPromedioDistanciaTareasCompletadas(@Param("idUsuario") Integer idUsuario);
+
+
+    // ¿Cuál es el promedio global de distancia de las tareas completadas respecto a la ubicación de los usuarios?
+    @Query(value = """
+    SELECT 
+        ROUND(AVG(ST_Distance(u.localizacion::geography, t.localizacion::geography))::numeric, 2) AS promedio_distancia_metros
+    FROM 
+        tareas t
+    JOIN 
+        usuarios u ON t.id_usuario = u.id_usuario
+    WHERE 
+        LOWER(t.estado) = 'completada'
+    """, nativeQuery = true)
+    Double findPromedioGlobalDistanciaTareasCompletadas();
+
+
+    // ¿Cuántas tareas ha realizado cada usuario por sector?
+    @Query(value = """
+    SELECT 
+        u.nombre_usuario,
+        s.nombre AS sector,
+        COUNT(*) AS cantidad_tareas_completadas
+    FROM 
+        tareas t
+    JOIN 
+        usuarios u ON t.id_usuario = u.id_usuario
+    JOIN 
+        sectores s ON t.id_sector = s.id_sector
+    WHERE 
+        LOWER(t.estado) = 'completada'
+    GROUP BY 
+        u.nombre_usuario, s.nombre
+    ORDER BY 
+        u.nombre_usuario, s.nombre
+    """, nativeQuery = true)
+    List<Object[]> findCantidadTareasPorUsuarioPorSector();
+
+
 }
 

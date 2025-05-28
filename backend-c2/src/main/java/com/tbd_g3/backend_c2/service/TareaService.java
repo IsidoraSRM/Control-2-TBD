@@ -132,5 +132,17 @@ public class TareaService {
     }
 
 
+    // ¿Cuál es el promedio global de distancia de las tareas completadas respecto a la ubicación de los usuarios?
+    public Double obtenerPromedioGlobalDistanciaTareasCompletadas() {
+        return tareaRepository.findPromedioGlobalDistanciaTareasCompletadas();
+    }
+
+
+    // ¿Cuántas tareas ha realizado cada usuario por sector?
+    public List<Object[]> obtenerCantidadTareasPorUsuarioPorSector() {
+        return tareaRepository.findCantidadTareasPorUsuarioPorSector();
+    }
+
+
 
 }
