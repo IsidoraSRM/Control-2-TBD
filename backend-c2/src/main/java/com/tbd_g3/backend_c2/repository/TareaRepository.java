@@ -1,5 +1,6 @@
 package com.tbd_g3.backend_c2.repository;
 
+import com.tbd_g3.backend_c2.entity.SectorEntity;
 import com.tbd_g3.backend_c2.entity.TareaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,47 +43,45 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
 
     // ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
     @Query(value = """
-        SELECT 
-            s.nombre AS nombreSector,
-            COUNT(t.id_tarea) AS cantidadTareasPendientes,
-            s.localizacion
-        FROM 
-            tareas t
-        JOIN 
-            sectores s ON t.id_sector = s.id_sector
-        WHERE 
-            t.estado = 'PENDIENTE'
-        GROUP BY 
-            s.id_sector, s.nombre, s.localizacion
-        HAVING 
-            COUNT(t.id_tarea) = (
+        SELECT s 
+        FROM SectorEntity s
+        WHERE s.idsector IN (
+            SELECT t.idsector
+            FROM TareaEntity t
+            WHERE t.estado = 'PENDIENTE'
+            GROUP BY t.idsector
+            HAVING COUNT(t.idtarea) = (
                 SELECT MAX(cantidad)
                 FROM (
                     SELECT COUNT(*) AS cantidad
-                    FROM tareas
+                    FROM TareaEntity
                     WHERE estado = 'PENDIENTE'
-                    GROUP BY id_sector
+                    GROUP BY idsector
                 ) AS subquery
             )
-        """, nativeQuery = true)
-    List<Object[]> findSectoresConMasTareasPendientes();
+        )
+        """)
+    List<SectorEntity> findSectoresConMasTareasPendientes();
+
     // ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
     @Query(value = """
         SELECT 
-            u.nombre_usuario,
-            t.id_tarea,
+            u.nombreusuario,
+            t.idtarea,
             t.titulo,
             s.nombre AS nombre_sector,
-            t.localizacion AS localizacion_tarea,
-            u.localizacion AS localizacion_usuario,
+            ST_X(t.localizacion) AS lat_tarea,
+            ST_Y(t.localizacion) AS lng_tarea,
+            ST_X(u.localizacion) AS lat_usuario,
+            ST_Y(u.localizacion) AS lng_usuario,
             ST_Distance(u.localizacion::geography, t.localizacion::geography) AS distancia_metros,
-            t.fecha_vencimiento
+            t.fechavencimiento
         FROM 
             tareas t
         JOIN 
-            usuarios u ON u.id_usuario = :idUsuario
+            usuarios u ON u.idusuario = :idUsuario
         JOIN 
-            sectores s ON t.id_sector = s.id_sector
+            sectores s ON t.idsector = s.idsector
         WHERE 
             t.estado = 'PENDIENTE'
         ORDER BY 
@@ -91,21 +90,22 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
         """, nativeQuery = true)
     List<Object[]> findTareaPendienteMasCercana(@Param("idUsuario") Integer idUsuario);
 
+
     // ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?
     @Query(value = """
         SELECT 
-            u.id_usuario,
-            u.nombre_usuario,
+            u.idusuario,
+            u.nombreusuario,
             AVG(ST_Distance(u.localizacion::geography, t.localizacion::geography)) AS promedio_distancia_metros
         FROM 
             tareas t
         JOIN 
-            usuarios u ON u.id_usuario = :idUsuario
+            usuarios u ON u.idusuario = :idUsuario
         WHERE 
             t.estado = 'COMPLETADA'
-            AND t.id_usuario = u.id_usuario
+            AND t.idusuario = u.idusuario
         GROUP BY 
-            u.id_usuario, u.nombre_usuario
+            u.idusuario, u.nombreusuario
         """, nativeQuery = true)
     List<Object[]> findPromedioDistanciaTareasCompletadas(@Param("idUsuario") Integer idUsuario);
 
@@ -117,7 +117,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
     FROM 
         tareas t
     JOIN 
-        usuarios u ON t.id_usuario = u.id_usuario
+        usuarios u ON t.idusuario = u.idusuario
     WHERE 
         LOWER(t.estado) = 'completada'
     """, nativeQuery = true)
@@ -127,21 +127,21 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
     // ¿Cuántas tareas ha realizado cada usuario por sector?
     @Query(value = """
     SELECT 
-        u.nombre_usuario,
+        u.nombreusuario,
         s.nombre AS sector,
         COUNT(*) AS cantidad_tareas_completadas
     FROM 
         tareas t
     JOIN 
-        usuarios u ON t.id_usuario = u.id_usuario
+        usuarios u ON t.idusuario = u.idusuario
     JOIN 
-        sectores s ON t.id_sector = s.id_sector
+        sectores s ON t.idsector = s.idsector
     WHERE 
         LOWER(t.estado) = 'completada'
     GROUP BY 
-        u.nombre_usuario, s.nombre
+        u.nombreusuario, s.nombre
     ORDER BY 
-        u.nombre_usuario, s.nombre
+        u.nombreusuario, s.nombre
     """, nativeQuery = true)
     List<Object[]> findCantidadTareasPorUsuarioPorSector();
 

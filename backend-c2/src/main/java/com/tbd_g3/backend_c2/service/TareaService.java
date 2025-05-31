@@ -1,8 +1,10 @@
 package com.tbd_g3.backend_c2.service;
 
+import com.tbd_g3.backend_c2.dto.SectorDTO;
 import com.tbd_g3.backend_c2.dto.TareaCercanaDTO;
 import com.tbd_g3.backend_c2.dto.TareaDTO;
 import com.tbd_g3.backend_c2.dto.TareaFiltradaDTO;
+import com.tbd_g3.backend_c2.entity.SectorEntity;
 import com.tbd_g3.backend_c2.entity.TareaEntity;
 import com.tbd_g3.backend_c2.repository.TareaRepository;
 import org.springframework.beans.BeanUtils;
@@ -116,8 +118,11 @@ public class TareaService {
     }
 
     // ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
-    public List<Object[]> obtenerSectoresConMasTareasPendientes() {
-        return tareaRepository.findSectoresConMasTareasPendientes();
+    public List<SectorDTO> obtenerSectoresConMasTareasPendientes() {
+        List<SectorEntity> sectores = tareaRepository.findSectoresConMasTareasPendientes();
+        return sectores.stream()
+                .map(SectorDTO::new)
+                .collect(Collectors.toList());
     }
 
     // ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
@@ -125,7 +130,8 @@ public class TareaService {
         List<Object[]> resultados = tareaRepository.findTareaPendienteMasCercana(idUsuario);
         return resultados.isEmpty() ? null : resultados.get(0);
     }
-    //
+
+    //  ¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?
     public Object[] obtenerPromedioDistanciaTareasCompletadas(Integer idUsuario) {
         List<Object[]> resultados = tareaRepository.findPromedioDistanciaTareasCompletadas(idUsuario);
         return resultados.isEmpty() ? null : resultados.get(0);

@@ -1,5 +1,6 @@
 package com.tbd_g3.backend_c2.controller;
 
+import com.tbd_g3.backend_c2.dto.SectorDTO;
 import com.tbd_g3.backend_c2.dto.TareaCercanaDTO;
 import com.tbd_g3.backend_c2.dto.TareaDTO;
 import com.tbd_g3.backend_c2.dto.TareaFiltradaDTO;
@@ -104,8 +105,8 @@ public class TareaController {
     }
 
     @GetMapping("/sectores-pendientes")
-    public ResponseEntity<List<Object[]>> getSectoresConMasTareasPendientes() {
-        List<Object[]> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
+    public ResponseEntity<List<SectorDTO>> getSectoresConMasTareasPendientes() {
+        List<SectorDTO> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
         if (sectores.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
