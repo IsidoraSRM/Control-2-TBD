@@ -27,5 +27,12 @@ public class SectorService {
         return new SectorDTO(sector);
     }
 
+    public SectorDTO buscarSectorConMasTareasCompletadasEn5km(Point userLocation) {
+        SectorEntity sector = sectorRepository.buscarSectorConMasTareasCompletadasEn5km(userLocation);
+        return new SectorDTO(sector); // Convertir la entidad a DTO antes de devolverla
+    }
+
+
+
 
 }

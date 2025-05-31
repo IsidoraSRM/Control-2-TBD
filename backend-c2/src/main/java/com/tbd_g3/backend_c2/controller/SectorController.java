@@ -24,6 +24,7 @@ public class SectorController {
         return sectorService.getAllSectores();
     }
 
+    //Consulta 3
     @GetMapping("/top-sector")
     public ResponseEntity<SectorDTO> getTopSector(@RequestParam double lon, @RequestParam double lat) {
         // Crear el punto geográfico con la ubicación del usuario
@@ -35,6 +36,16 @@ public class SectorController {
 
         return ResponseEntity.ok(sector);
     }
+
+    @GetMapping("/sector-top-5km")
+    public ResponseEntity<SectorDTO> obtenerSectorTop5km(@RequestParam double lon, @RequestParam double lat) {
+        Point userLocation = new GeometryFactory().createPoint(new Coordinate(lon, lat));
+        userLocation.setSRID(4326);
+
+        SectorDTO sector = sectorService.buscarSectorConMasTareasCompletadasEn5km(userLocation);
+        return ResponseEntity.ok(sector);
+    }
+
 
 
 }
