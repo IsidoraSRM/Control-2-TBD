@@ -41,7 +41,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 📌 Autenticación con JWT
+    //  Autenticación con JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         Optional<UsuarioEntity> optionalUser = usuarioRepository.findByCorreo(loginDto.getCorreo());
