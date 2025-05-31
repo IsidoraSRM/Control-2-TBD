@@ -5,11 +5,15 @@ import com.tbd_g3.backend_c2.dto.TareaDTO;
 import com.tbd_g3.backend_c2.dto.TareaFiltradaDTO;
 import com.tbd_g3.backend_c2.entity.TareaEntity;
 import com.tbd_g3.backend_c2.service.TareaService;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,11 +34,34 @@ public class TareaController {
     }
 
     @PostMapping()
-    public void addTarea(@RequestBody TareaEntity tarea) {
-        TareaEntity newTarea = tarea;
-        tareaService.saveTarea(newTarea);
-    }
+    @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
+    public ResponseEntity<String> addTarea(
+            @RequestParam String titulo,
+            @RequestParam String descripcion,
+            @RequestParam LocalDate fechavencimiento,
+            @RequestParam String estado,
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam int idusuario,
+            @RequestParam int idsector
+    ) {
+        // Crear Point desde lat/lng
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Point point = geometryFactory.createPoint(new Coordinate(lng, lat));
 
+        // Construir la entidad manualmente
+        TareaEntity tarea = new TareaEntity();
+        tarea.setTitulo(titulo);
+        tarea.setDescripcion(descripcion);
+        tarea.setFechavencimiento(fechavencimiento);
+        tarea.setEstado(estado);
+        tarea.setLocalizacion(point);
+        tarea.setIdusuario(Integer.valueOf(idusuario));
+        tarea.setIdsector(Integer.valueOf(idsector));
+
+        tareaService.saveTarea(tarea);
+        return ResponseEntity.ok("Tarea creada exitosamente");
+    }
     @PutMapping()
     public void updateTarea(@RequestBody TareaEntity tarea) {
         TareaEntity newTarea = tarea;
@@ -56,7 +83,6 @@ public class TareaController {
             throw new Exception(e.getMessage());
         }
     }
-
     // filtros
     @GetMapping("/filtrar")
     public ResponseEntity<List<TareaFiltradaDTO>> filtrarTareas(

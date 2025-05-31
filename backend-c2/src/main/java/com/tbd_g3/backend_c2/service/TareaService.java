@@ -28,11 +28,12 @@ public class TareaService {
 
     //obtener 1 tarea por id
     public TareaEntity getTareaById(int id) {
-        return tareaRepository.findById(id).orElse(null);
+        return tareaRepository.findById(Integer.valueOf(id)).orElse(null);
     }
 
     //crear una tarea
     public void saveTarea(TareaEntity tarea) {
+        TareaDTO newTarea = new TareaDTO(tarea);
         tareaRepository.save(tarea);
     }
 
@@ -48,7 +49,7 @@ public class TareaService {
     //eliminar la tarea
     public void deleteTarea(int id) throws Exception {
         try {
-            tareaRepository.delete(tareaRepository.findById(id).orElse(null));
+            tareaRepository.delete(tareaRepository.findById(Integer.valueOf(id)).orElse(null));
         } catch (Exception e) {
             throw new Exception("Error al eliminar la tarea");
         }
@@ -56,7 +57,7 @@ public class TareaService {
 
     //completar la tarea
     public void completarTarea(int id) throws Exception {
-        TareaEntity tarea = tareaRepository.findById(id).orElse(null);
+        TareaEntity tarea = tareaRepository.findById(Integer.valueOf(id)).orElse(null);
         if (tarea != null) {
             try {
                 tarea.setEstado("COMPLETADA");
@@ -108,7 +109,7 @@ public class TareaService {
             dto.setLocalizacion((org.geolatte.geom.Point) resultado[3]);
         }
 
-        dto.setDistanciaMetros(((Number) resultado[4]).doubleValue());
+        dto.setDistanciaMetros(Double.valueOf(((Number) resultado[4]).doubleValue()));
         dto.setFechaVencimiento(((java.sql.Date) resultado[5]).toLocalDate());
 
         return dto;
@@ -124,25 +125,17 @@ public class TareaService {
         List<Object[]> resultados = tareaRepository.findTareaPendienteMasCercana(idUsuario);
         return resultados.isEmpty() ? null : resultados.get(0);
     }
-
     //
     public Object[] obtenerPromedioDistanciaTareasCompletadas(Integer idUsuario) {
         List<Object[]> resultados = tareaRepository.findPromedioDistanciaTareasCompletadas(idUsuario);
         return resultados.isEmpty() ? null : resultados.get(0);
     }
-
-
     // ¿Cuál es el promedio global de distancia de las tareas completadas respecto a la ubicación de los usuarios?
     public Double obtenerPromedioGlobalDistanciaTareasCompletadas() {
         return tareaRepository.findPromedioGlobalDistanciaTareasCompletadas();
     }
-
-
     // ¿Cuántas tareas ha realizado cada usuario por sector?
     public List<Object[]> obtenerCantidadTareasPorUsuarioPorSector() {
         return tareaRepository.findCantidadTareasPorUsuarioPorSector();
     }
-
-
-
 }

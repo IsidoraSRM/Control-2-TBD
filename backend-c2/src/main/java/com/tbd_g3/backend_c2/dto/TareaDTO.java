@@ -13,8 +13,8 @@ public class TareaDTO {
     private String descripcion;
     private LocalDate fechavencimiento;
     private String estado;
-    private Double lat;
-    private Double lng;
+    private double lat;
+    private double lng;
     private Integer idusuario;
     private Integer idsector;
 

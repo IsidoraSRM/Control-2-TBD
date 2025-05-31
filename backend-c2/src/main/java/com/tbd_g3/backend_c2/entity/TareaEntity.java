@@ -22,7 +22,7 @@ public class TareaEntity {
     private LocalDate fechavencimiento;
 
     private String estado;
-
+    @Column(name = "localizacion", columnDefinition = "geometry(Point,4326)", nullable = false)
     private Point localizacion;
 
     private Integer idusuario;

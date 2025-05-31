@@ -12,8 +12,6 @@ import java.util.Map;
 @Repository
 public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
 
-
-
     @Query(value = "SELECT * FROM filtrar_tareas(:estado, :palabraClave)", nativeQuery = true)
     List<Object[]> filtrarTareas(
             @Param("estado") String estado,
