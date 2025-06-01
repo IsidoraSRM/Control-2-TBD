@@ -19,6 +19,28 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
             @Param("palabraClave") String palabraClave
     );
 
+    //QUERY 1; ¿Cuántas tareas ha hecho el usuario por sector?
+
+    @Query(value = """
+    SELECT 
+        u.nombreusuario,
+        s.nombre AS nombreSector,
+        COUNT(t.idtarea) AS cantidadTareas
+    FROM 
+        tareas t
+    JOIN 
+        usuarios u ON t.idusuario = u.idusuario
+    JOIN 
+        sectores s ON t.idsector = s.idsector
+    WHERE 
+        t.estado = 'COMPLETADA'
+    GROUP BY 
+        u.nombreusuario, s.nombre
+    ORDER BY 
+        u.nombreusuario, COUNT(t.idtarea) DESC
+    """, nativeQuery = true)
+    List<Object[]> countTareasCompletadasPorUsuarioYSector();
+
     @Query(value = """
         SELECT 
             t.idtarea,

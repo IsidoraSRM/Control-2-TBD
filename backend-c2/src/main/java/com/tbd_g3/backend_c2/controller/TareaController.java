@@ -1,9 +1,6 @@
 package com.tbd_g3.backend_c2.controller;
 
-import com.tbd_g3.backend_c2.dto.SectorDTO;
-import com.tbd_g3.backend_c2.dto.TareaCercanaDTO;
-import com.tbd_g3.backend_c2.dto.TareaDTO;
-import com.tbd_g3.backend_c2.dto.TareaFiltradaDTO;
+import com.tbd_g3.backend_c2.dto.*;
 import com.tbd_g3.backend_c2.entity.TareaEntity;
 import com.tbd_g3.backend_c2.service.TareaService;
 import org.locationtech.jts.geom.Coordinate;
@@ -24,58 +21,61 @@ public class TareaController {
     @Autowired
     private TareaService tareaService;
 
+    // Obtener todas las tareas
     @GetMapping
     public List<TareaDTO> getAllTareas() {
         return tareaService.getAllTareas();
     }
 
+    // Obtener una tarea por ID
     @GetMapping("/{id}")
-    public TareaEntity getTareaById(@PathVariable int id) {
-        return tareaService.getTareaById(id);
+    public ResponseEntity<TareaDTO> getTareaById(@PathVariable int id) {
+        TareaEntity tarea = tareaService.getTareaById(id);
+        if (tarea == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new TareaDTO(tarea));
     }
 
-    @PostMapping()
+    // Crear una nueva tarea (con RequestBody en lugar de parámetros)
+    @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
-    public ResponseEntity<String> addTarea(
-            @RequestParam String titulo,
-            @RequestParam String descripcion,
-            @RequestParam LocalDate fechavencimiento,
-            @RequestParam String estado,
-            @RequestParam double lat,
-            @RequestParam double lng,
-            @RequestParam int idusuario,
-            @RequestParam int idsector
-    ) {
-        // Crear Point desde lat/lng
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Point point = geometryFactory.createPoint(new Coordinate(lng, lat));
-
-        // Construir la entidad manualmente
-        TareaEntity tarea = new TareaEntity();
-        tarea.setTitulo(titulo);
-        tarea.setDescripcion(descripcion);
-        tarea.setFechavencimiento(fechavencimiento);
-        tarea.setEstado(estado);
-        tarea.setLocalizacion(point);
-        tarea.setIdusuario(Integer.valueOf(idusuario));
-        tarea.setIdsector(Integer.valueOf(idsector));
-
-        tareaService.saveTarea(tarea);
-        return ResponseEntity.ok("Tarea creada exitosamente");
+    public ResponseEntity<TareaDTO> createTarea(@RequestBody TareaDTO tareaDTO) {
+        TareaEntity tarea = tareaService.createTarea(tareaDTO);
+        return ResponseEntity.ok(new TareaDTO(tarea));
     }
-    @PutMapping()
-    public void updateTarea(@RequestBody TareaEntity tarea) {
-        TareaEntity newTarea = tarea;
-        tareaService.saveTarea(newTarea);
-    }
-    @DeleteMapping("/delete/{id}")
-    public void deleteTarea(@PathVariable int id) throws Exception {
-        try{
-            tareaService.deleteTarea(id);
-        }catch(Exception e){
-            throw new Exception(e.getMessage());
+
+    // Actualizar una tarea existente (con RequestBody completo)
+    @PutMapping("/{id}")
+    public ResponseEntity<TareaDTO> updateTarea(@PathVariable int id, @RequestBody TareaDTO tareaDTO) {
+        try {
+            TareaEntity updatedTarea = tareaService.updateTarea(id, tareaDTO);
+            return ResponseEntity.ok(new TareaDTO(updatedTarea));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
     }
+
+    // Eliminar una tarea
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTarea(@PathVariable int id) {
+        try {
+            tareaService.deleteTarea(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    //QUERY 1; ¿Cuántas tareas ha hecho el usuario por sector?
+    @GetMapping("/tareas-por-usuario-sector")
+    public ResponseEntity<List<TareasPorUsuarioSectorDTO>> getTareasCompletadasPorUsuarioYSector() {
+        List<TareasPorUsuarioSectorDTO> resultados = tareaService.getTareasCompletadasPorUsuarioYSector();
+        if (resultados.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(resultados);
+    }
+
     @PutMapping("/completar/{id}")
     public void completarTarea(@PathVariable int id) throws Exception {
         try{

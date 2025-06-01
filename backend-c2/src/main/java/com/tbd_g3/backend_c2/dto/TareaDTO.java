@@ -1,12 +1,16 @@
 package com.tbd_g3.backend_c2.dto;
 
 import com.tbd_g3.backend_c2.entity.TareaEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TareaDTO {
     private Integer idtarea;
     private String titulo;

@@ -1,12 +1,11 @@
 package com.tbd_g3.backend_c2.service;
 
-import com.tbd_g3.backend_c2.dto.SectorDTO;
-import com.tbd_g3.backend_c2.dto.TareaCercanaDTO;
-import com.tbd_g3.backend_c2.dto.TareaDTO;
-import com.tbd_g3.backend_c2.dto.TareaFiltradaDTO;
+import com.tbd_g3.backend_c2.dto.*;
 import com.tbd_g3.backend_c2.entity.SectorEntity;
 import com.tbd_g3.backend_c2.entity.TareaEntity;
 import com.tbd_g3.backend_c2.repository.TareaRepository;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,39 +21,68 @@ public class TareaService {
     @Autowired
     private TareaRepository tareaRepository;
 
-    //obtener todas las tareas
+    private final GeometryFactory geometryFactory = new GeometryFactory();
+
+    // Obtener todas las tareas
     public List<TareaDTO> getAllTareas() {
-        List<TareaEntity> tareas = tareaRepository.findAll();
-        return tareas.stream().map(TareaDTO::new).collect(Collectors.toList());
+        return tareaRepository.findAll().stream()
+                .map(TareaDTO::new)
+                .collect(Collectors.toList());
     }
 
-    //obtener 1 tarea por id
+    // Obtener una tarea por ID
     public TareaEntity getTareaById(int id) {
-        return tareaRepository.findById(Integer.valueOf(id)).orElse(null);
+        return tareaRepository.findById(id).orElse(null);
     }
 
-    //crear una tarea
-    public void saveTarea(TareaEntity tarea) {
-        TareaDTO newTarea = new TareaDTO(tarea);
-        tareaRepository.save(tarea);
+    // Crear una nueva tarea
+    public TareaEntity createTarea(TareaDTO tareaDTO) {
+        TareaEntity tarea = new TareaEntity();
+        mapDtoToEntity(tareaDTO, tarea);
+        return tareaRepository.save(tarea);
     }
 
-    //actualizar la tarea
-    public void updateTarea(TareaEntity tarea) throws Exception {
-        try {
-            tareaRepository.save(tarea);
-        } catch (Exception e) {
-            throw new Exception("Error al atualizar la tarea");
+    // Actualizar una tarea existente
+    public TareaEntity updateTarea(int id, TareaDTO tareaDTO) throws Exception {
+        TareaEntity tareaExistente = getTareaById(id);
+        if (tareaExistente == null) {
+            throw new Exception("Tarea no encontrada");
         }
+        mapDtoToEntity(tareaDTO, tareaExistente);
+        return tareaRepository.save(tareaExistente);
     }
 
-    //eliminar la tarea
+    // Mapear DTO a Entity
+    private void mapDtoToEntity(TareaDTO dto, TareaEntity entity) {
+        entity.setTitulo(dto.getTitulo());
+        entity.setDescripcion(dto.getDescripcion());
+        entity.setFechavencimiento(dto.getFechavencimiento());
+        entity.setEstado(dto.getEstado());
+
+        if (dto.getLat() != 0 && dto.getLng() != 0) {
+            Point point = geometryFactory.createPoint(new Coordinate(dto.getLng(), dto.getLat()));
+            entity.setLocalizacion(point);
+        }
+
+        entity.setIdusuario(dto.getIdusuario());
+        entity.setIdsector(dto.getIdsector());
+    }
+
+    // Eliminar una tarea
     public void deleteTarea(int id) throws Exception {
-        try {
-            tareaRepository.delete(tareaRepository.findById(Integer.valueOf(id)).orElse(null));
-        } catch (Exception e) {
-            throw new Exception("Error al eliminar la tarea");
+        if (!tareaRepository.existsById(id)) {
+            throw new Exception("Tarea no encontrada");
         }
+        tareaRepository.deleteById(id);
+    }
+    //QUERY 1; ¿Cuántas tareas ha hecho el usuario por sector?
+    public List<TareasPorUsuarioSectorDTO> getTareasCompletadasPorUsuarioYSector() {
+        return tareaRepository.countTareasCompletadasPorUsuarioYSector().stream()
+                .map(result -> new TareasPorUsuarioSectorDTO(
+                        (String) result[0],
+                        (String) result[1],
+                        ((Number) result[2]).longValue()))
+                .collect(Collectors.toList());
     }
 
     //completar la tarea
