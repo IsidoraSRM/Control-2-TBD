@@ -1,28 +1,63 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import "leaflet/dist/leaflet.css";
+import { LMap, LTileLayer, LMarker, LIcon, LPopup } from "@vue-leaflet/vue-leaflet";
+import { getMarkerIcon, markerStyles } from '../utils/mapIcons';
+
+const zoom = ref(13);
+const center = ref([-33.4569, -70.6483]); // Santiago, Chile como ejemplo
+const markers = ref([
+  {
+    id: 1,
+    position: [-33.4569, -70.6483],
+    popup: "Tarea pendiente: Revisión de equipos",
+    status: "pending"
+  },
+  {
+    id: 2,
+    position: [-33.4489, -70.6583],
+    popup: "Tarea completada: Mantenimiento",
+    status: "completed"
+  }
+]);
+
+</script>
+
 <template>
   <div class="home">
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-content">
-        <h1>
-          Gestión Inteligente de
-          <span class="highlight">Tareas Geoespaciales</span>
-        </h1>
-        <p>Organiza, ubica y prioriza tus actividades en un mapa interactivo</p>
-        <button class="cta-button">Comenzar ahora</button>
-      </div>
-      <div class="hero-image">
-        <div class="map-preview">
-          <!-- Simulación de mapa con marcadores -->
-          <div class="map-container">
-            <div class="marker completed" style="top: 30%; left: 20%">
-              <span class="tooltip">Tarea completada</span>
-            </div>
-            <div class="marker pending" style="top: 50%; left: 60%">
-              <span class="tooltip">Tarea pendiente</span>
-            </div>
-            <div class="marker pending" style="top: 70%; left: 40%">
-              <span class="tooltip">Tarea pendiente</span>
-            </div>
+      <div class="content-wrapper hero-inner">
+        <div class="hero-content">
+          <h1>
+            Gestión Inteligente de
+            <span class="highlight">Tareas georeferenciadas</span>
+          </h1>
+          <p>Gestiona y monitorea tus tareas según tu ubicación.</p>
+          <router-link to="/login" class="cta-button">Comenzar ahora</router-link>
+        </div>
+        <div class="hero-image">
+          <div class="map-preview">
+            <l-map
+              v-model:zoom="zoom"
+              :center="center"
+              :use-global-leaflet="false"
+              class="map-container"
+            >
+              <l-tile-layer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                layer-type="base"
+                name="OpenStreetMap"
+              />
+              <l-marker
+                v-for="marker in markers"
+                :key="marker.id"
+                :lat-lng="marker.position"
+                :icon="getMarkerIcon(marker.status)"
+              >
+                <l-popup>{{ marker.popup }}</l-popup>
+              </l-marker>
+            </l-map>
           </div>
         </div>
       </div>
@@ -30,29 +65,32 @@
 
     <!-- Características -->
     <section class="features">
-      <div class="feature-card">
-        <i class="fas fa-map-marker-alt feature-icon"></i>
-        <h3>Asociación Geográfica</h3>
-        <p>Vincula tareas a ubicaciones exactas con tecnología geoespacial</p>
-      </div>
+      <div class="content-wrapper">
+        <div class="feature-card">
+          <i class="fas fa-map-marker-alt feature-icon"></i>
+          <h3>Asociación Geográfica</h3>
+          <p>Vincula tareas a ubicaciones exactas con tecnología geoespacial</p>
+        </div>
 
-      <div class="feature-card">
-        <i class="fas fa-filter feature-icon"></i>
-        <h3>Filtros Avanzados</h3>
-        <p>Encuentra tareas por estado, sector o proximidad</p>
-      </div>
+        <div class="feature-card">
+          <i class="fas fa-filter feature-icon"></i>
+          <h3>Filtros Avanzados</h3>
+          <p>Encuentra tareas por estado, sector o proximidad</p>
+        </div>
 
-      <div class="feature-card">
-        <i class="fas fa-bell feature-icon"></i>
-        <h3>Alertas Automáticas</h3>
-        <p>Notificaciones para vencimientos y tareas cercanas</p>
+        <div class="feature-card">
+          <i class="fas fa-bell feature-icon"></i>
+          <h3>Alertas Automáticas</h3>
+          <p>Notificaciones para vencimientos y tareas cercanas</p>
+        </div>
       </div>
     </section>
 
     <!-- CTA Final -->
     <section class="final-cta">
       <h2>¿Listo para optimizar tu gestión?</h2>
-      <button class="cta-button">Registrarse Gratis</button>
+      <p>Comienza a gestionar tus tareas de manera eficiente y segura.</p>
+      <router-link to="/login" class="cta-button">Registrarse Gratis</router-link>
     </section>
   </div>
 </template>
@@ -69,23 +107,29 @@
 /* Hero Section */
 .hero {
   width: 100%;
-  max-width: 1920px;
-  margin: 0 auto;
-  padding: 0 5%;
+  padding: 4rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-inner {
   display: grid;
-  grid-template-columns: 45% 65%;
+  grid-template-columns: 40% 55%;
+  gap: 5%;
   align-items: center;
-  justify-content: space-between;
 }
 
 .hero-content {
-  padding-right: 5%;
+  padding-right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .hero-content h1 {
-  font-size: 4rem;
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
+  font-size: 3.5rem;
+  line-height: 1.3;
+  margin-bottom: 0;
   color: var(--text-primary);
 }
 
@@ -99,7 +143,7 @@
 .hero-content p {
   font-size: 1.5rem;
   color: var(--text-secondary);
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
   line-height: 1.6;
 }
 
@@ -113,6 +157,10 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 200px;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
 }
 
 .cta-button:hover {
@@ -121,22 +169,29 @@
   transform: translateY(-2px);
 }
 
+/* Para el botón en el hero section que no necesita estar centrado */
+.hero-content .cta-button {
+  margin: 0;
+  display: inline-block;
+  align-self: center;
+}
+
 /* Mapa Preview */
 .hero-image {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-left: 2rem;
 }
 
 .map-preview {
   width: 100%;
-  max-width: 800px;
+  height: 500px;
   background: var(--bg-secondary);
   border-radius: 20px;
   overflow: hidden;
-  aspect-ratio: 16/9;
   border: 1px solid var(--border-blue);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
@@ -144,65 +199,21 @@
 .map-container {
   width: 100%;
   height: 100%;
-  position: relative;
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-}
-
-.marker {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  position: absolute;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.marker.completed {
-  background: var(--primary-blue);
-  box-shadow: 0 0 15px var(--blue-glow);
-}
-
-.marker.pending {
-  background: var(--blue-neon);
-  box-shadow: 0 0 15px var(--blue-neon);
-}
-
-.marker:hover {
-  transform: scale(1.2);
-}
-
-.marker .tooltip {
-  position: absolute;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  white-space: nowrap;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  border: 1px solid var(--border-blue);
-}
-
-.marker:hover .tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(-5px);
+  z-index: 1;
 }
 
 /* Features Section */
 .features {
-  width: 100%;
-  max-width: 1920px;
+  width: 1200px;
+  padding: 5rem 0;
   margin: 0 auto;
-  padding: 5rem 5%;
+}
+
+.features .content-wrapper {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
+  padding: 0 2rem;
 }
 
 .feature-card {
@@ -241,18 +252,53 @@
 
 /* Final CTA */
 .final-cta {
+  width: 1200px;
+  margin: 0 auto;
   background: var(--bg-secondary);
-  padding: 6rem 5%;
+  padding: 3rem 2rem;
   text-align: center;
-  width: 100%;
+  border-radius: 20px;
+  margin-bottom: 2rem;
 }
 
 .final-cta h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
   color: var(--text-primary);
-  font-size: 3rem;
-  margin-bottom: 2rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.final-cta p {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1280px) {
+  .features,
+  .final-cta {
+    width: 90%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .features .content-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .features .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estilos de los marcadores personalizados */
+.custom-marker-container {
+  background: transparent;
+  border: none;
+}
+
+.custom-marker:hover {
+  transform: scale(1.2);
 }
 </style>

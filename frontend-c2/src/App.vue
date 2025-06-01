@@ -1,5 +1,6 @@
 <script setup>
 import AppHeader from './components/layout/AppHeader.vue'
+import AppFooter from './components/layout/AppFooter.vue'
 import './assets/main.css'
 </script>
 
@@ -9,6 +10,7 @@ import './assets/main.css'
     <main class="page-container">
       <router-view />
     </main>
+    <AppFooter />
   </div>
 </template>
 
@@ -19,6 +21,7 @@ import './assets/main.css'
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
+  overflow-x: hidden;
 }
 
 .page-container {

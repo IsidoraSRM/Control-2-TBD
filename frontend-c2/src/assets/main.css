@@ -1,10 +1,12 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 
 a,
@@ -25,12 +27,6 @@ a,
   body {
     display: flex;
     place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
   }
 }
 
@@ -67,13 +63,6 @@ html, body {
   overflow-x: hidden;
 }
 
-#app {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Estilos globales para links */
 a {
   text-decoration: none;
@@ -91,10 +80,18 @@ button {
 /* Contenedor principal para todas las páginas */
 .page-container {
   width: 100%;
-  max-width: 1920px;
   margin: 0 auto;
-  padding: 0 5%;
+  padding: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor para el contenido centrado */
+.content-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 2rem;
+  margin: 0 auto;
 }

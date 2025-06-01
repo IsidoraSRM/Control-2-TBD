@@ -20,39 +20,52 @@
       <!-- Navegación -->
       <nav class="nav" :class="{ 'nav-open': isMenuOpen }">
         <ul class="nav-list">
-          <li><a href="/" class="nav-link active">Home</a></li>
-          <li>
-            <a href="#" class="nav-link" data-tooltip="Gestión de tareas y más">
-              Funcionalidades
-            </a>
+          <li><router-link to="/" class="nav-link" active-class="active">Home</router-link></li>
+
+          <li v-if="isLoggedIn">
+            <router-link to="/client" class="nav-link">Gestión de tareas</router-link>
           </li>
+          
+          <li>
+            <router-link to="/how-works" class="nav-link" data-tooltip="Gestión de tareas y más">
+              ¿Como funciona?
+            </router-link>
+          </li>
+
         </ul>
 
         <!-- Botones de acción -->
         <div class="auth-buttons">
-          <router-link to="/login" class="btn btn-primary">Registro</router-link>
+          <template v-if="isLoggedIn">
+            <button class="btn btn-secondary" @click="logout">Cerrar sesión</button>
+          </template>
+          <template v-else>
+            <router-link to="/login" class="btn btn-primary">Registro/Login</router-link>
+          </template>
         </div>
 
-        <!-- Elementos opcionales -->
-        <div class="optional-controls">
-          <select class="language-select">
-            <option value="es">ES</option>
-            <option value="en">EN</option>
-          </select>
-          <button class="theme-toggle" @click="toggleTheme">
-            <i class="fas" :class="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
-          </button>
-        </div>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const isMenuOpen = ref(false)
 const isDarkMode = ref(true)
+const router = useRouter()
+
+const isLoggedIn = computed(() => {
+  const user = localStorage.getItem('user')
+  return !!user
+})
+
+const logout = () => {
+  localStorage.removeItem('user')
+  router.push('/login')
+}
 
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value

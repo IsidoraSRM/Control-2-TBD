@@ -5,30 +5,51 @@
   </div>
   <div class="login-container">
     <div class="login-card" ref="cardRef">
-      <h2>{{ isLogin ? 'Login' : 'Registro' }}</h2>
+      <h2>{{ isLogin ? 'Iniciar sesión' : 'Registrarse' }}</h2>
       <form @submit.prevent="isLogin ? handleLogin() : handleRegister()">
-        <div class="input-group">
-          <input v-model="username" type="text" id="username" required />
-          <label for="username">Username</label>
-        </div>
-        <div class="input-group">
-          <input v-model="password" type="password" id="password" required />
-          <label for="password">Password</label>
-        </div>
-        <template v-if="!isLogin">
+        <template v-if="isLogin">
           <div class="input-group">
-            <input v-model="geo" type="text" id="geo" required />
-            <label for="geo">Altitud</label>
+            <input v-model="loginData.correo" type="email" id="login-correo" required />
+            <label for="login-correo">Correo electrónico</label>
           </div>
           <div class="input-group">
-            <input v-model="geo" type="text" id="geo" required />
-            <label for="geo">Latitud</label>
+            <input v-model="loginData.contrasena" type="password" id="login-contrasena" required />
+            <label for="login-contrasena">Contraseña</label>
           </div>
         </template>
-        <button :class="['login-button', { loading }]" type="submit">
+        <template v-else>
+          <div class="input-group">
+            <input v-model="registerData.nombreUsuario" type="text" id="register-nombreUsuario" required />
+            <label for="register-nombreUsuario">Nombre de usuario</label>
+          </div>
+          <div class="input-group">
+            <input v-model="registerData.correo" type="email" id="register-correo" required />
+            <label for="register-correo">Correo electrónico</label>
+          </div>
+          <div class="input-group">
+            <input v-model="registerData.contrasena" type="password" id="register-contrasena" required />
+            <label for="register-contrasena">Contraseña</label>
+          </div>
+          <div class="input-group">
+            <input v-model.number="registerData.latitud" type="number" step="any" id="register-latitud" required />
+            <label for="register-latitud">Latitud</label>
+          </div>
+          <div class="input-group">
+            <input v-model.number="registerData.longitud" type="number" step="any" id="register-longitud" required />
+            <label for="register-longitud">Longitud</label>
+          </div>
+        </template>
+        <button 
+          :class="['login-button', { loading, 'evasive-button': shouldButtonBeEvasive }]" 
+          type="submit"
+          ref="loginButtonRef"
+          @mouseenter="handleButtonMouseEnter"
+          @mouseleave="handleButtonMouseLeave"
+        >
           {{ loading ? '' : (isLogin ? 'Iniciar Sesión' : 'Registrarse') }}
         </button>
       </form>
+      <div v-if="error" class="error-message">{{ error }}</div>
       <div class="links">
         <a href="#" @click.prevent="isLogin = !isLogin">
           {{ isLogin ? 'Registrarse' : 'Ya tienes cuenta? Inicia sesión' }}
@@ -39,31 +60,125 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const isLogin = ref(true);
-const username = ref('');
-const password = ref('');
-const geo = ref('');
 const loading = ref(false);
+const error = ref('');
 const cardRef = ref(null);
+const loginButtonRef = ref(null);
 
-const handleLogin = () => {
-  if (!username.value || !password.value) return;
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-    // Aquí iría tu lógica de login real
-  }, 1500);
+const API_URL = import.meta.env.VITE_API_URL;
+
+const loginData = ref({
+  correo: '',
+  contrasena: ''
+});
+
+const registerData = ref({
+  nombreUsuario: '',
+  correo: '',
+  contrasena: '',
+  fechaRegistro: new Date().toISOString(),
+  rol: 'CLIENTE',
+  latitud: null,
+  longitud: null
+});
+
+// Computed para determinar si el botón debe ser evasivo
+const shouldButtonBeEvasive = computed(() => {
+  if (!isLogin.value) return false; // Solo para login, no para registro
+  return !loginData.value.correo || !loginData.value.contrasena;
+});
+
+// Función para manejar cuando el mouse entra al botón
+const handleButtonMouseEnter = () => {
+  if (shouldButtonBeEvasive.value && loginButtonRef.value) {
+    moveButtonAway();
+  }
 };
 
-const handleRegister = () => {
-  if (!username.value || !password.value || !geo.value) return;
-  loading.value = true;
+// Función para mover el botón lejos del mouse
+const moveButtonAway = () => {
+  const button = loginButtonRef.value;
+  if (!button) return;
+  
+  // Generar posición aleatoria dentro del contenedor
+  const container = button.closest('.login-card');
+  const containerRect = container.getBoundingClientRect();
+  const buttonRect = button.getBoundingClientRect();
+  
+  // Calcular límites para que el botón no se salga del contenedor
+  const maxX = containerRect.width - buttonRect.width - 50; // 60px de margen
+  const maxY = containerRect.height - buttonRect.height - 50;
+  
+  const randomX = Math.random() * maxX - maxX / 2;
+  const randomY = Math.random() * maxY - maxY / 2;
+  
+  // Aplicar transformación
+  button.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.9)`;
+  button.style.transition = 'transform 0.2s ease-out';
+  
+  // Volver a la posición original después de un tiempo
   setTimeout(() => {
+    if (shouldButtonBeEvasive.value) {
+      button.style.transform = 'translate(0, 0) scale(1)';
+    }
+  }, 1000);
+};
+
+// Función para manejar cuando el mouse sale del botón
+const handleButtonMouseLeave = () => {
+  if (loginButtonRef.value && !shouldButtonBeEvasive.value) {
+    loginButtonRef.value.style.transform = 'translate(0, 0) scale(1)';
+  }
+};
+
+const handleLogin = async () => {
+  if (!loginData.value.correo || !loginData.value.contrasena) {
+    error.value = 'Completa todos los campos para iniciar sesión.';
+    return;
+  }
+  error.value = '';
+  loading.value = true;
+  try {
+    const response = await axios.post(`${API_URL}/auth/login`, loginData.value);
+    localStorage.setItem('user', JSON.stringify(response.data));
+    error.value = '¡Login exitoso!';
+    router.push('/client');
+  } catch (err) {
+    error.value = err.response?.data || 'Error al iniciar sesión';
+  } finally {
     loading.value = false;
-    // Aquí iría tu lógica de registro real
-  }, 1500);
+  }
+};
+
+const handleRegister = async () => {
+  if (!registerData.value.nombreUsuario || !registerData.value.correo || !registerData.value.contrasena || registerData.value.latitud === null || registerData.value.longitud === null) {
+    error.value = 'Completa todos los campos para registrarte.';
+    return;
+  }
+  error.value = '';
+  loading.value = true;
+  try {
+    const response = await axios.post(`${API_URL}/auth/register`, registerData.value);
+    if (response.status === 201) {
+      // Registro exitoso, puedes redirigir o mostrar mensaje
+      isLogin.value = true;
+      // Limpiar campos de registro
+      registerData.value = {
+        nombreUsuario: '', correo: '', contrasena: '', fechaRegistro: new Date().toISOString(), rol: 'CLIENTE', latitud: null, longitud: null
+      };
+      error.value = '¡Registro exitoso! Ahora inicia sesión.';
+    }
+  } catch (err) {
+    error.value = err.response?.data || 'Error al registrar usuario';
+  } finally {
+    loading.value = false;
+  }
 };
 
 // Efectos de interacción (focus/blur)
@@ -84,8 +199,8 @@ onMounted(() => {
     const rect = cardRef.value.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    const rotateX = (e.clientY - centerY) / 100;
-    const rotateY = (centerX - e.clientX) / 100;
+    const rotateX = (e.clientY - centerY) / 85;
+    const rotateY = (centerX - e.clientX) / 85;
     cardRef.value.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
   };
   const handleMouseLeave = () => {
@@ -265,7 +380,7 @@ body {
   transition: all 0.3s ease;
 }
 .login-button {
-  width: 100%;
+  width: 50%;
   padding: 15px;
   font-size: 16px;
   font-weight: 600;
@@ -275,7 +390,8 @@ body {
   border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin: 20px 0;
+  margin: 20px auto;
+  display: block;
   box-shadow: 0 4px 15px var(--blue-glow);
   position: relative;
   overflow: hidden;
@@ -287,6 +403,12 @@ body {
 }
 .login-button:active {
   transform: scale(0.98);
+}
+.login-button.evasive-button {
+  cursor: not-allowed;
+}
+.login-button.evasive-button:hover {
+  animation: none;
 }
 .links {
   display: flex;
