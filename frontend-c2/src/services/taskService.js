@@ -29,41 +29,38 @@ class TaskService {
   // Obtener tareas del usuario
   async getUserTasks(userId) {
     // Si el endpoint no filtra por usuario, filtra en frontend
-    const res = await this.axios.get('/tareas');
+    const res = await this.axios.get('/api/tareas');
     return { data: res.data.filter(t => t.idusuario === userId) };
   }
 
   // Obtener todas las tareas
   async getAllTasks() {
-    return this.axios.get('/tareas');
+    return this.axios.get('/api/tareas');
   }
 
   // Crear nueva tarea
   async createTask(data) {
-    // El backend espera datos por params, así que usa FormData o URLSearchParams
-    const params = new URLSearchParams();
-    Object.entries(data).forEach(([k, v]) => params.append(k, v));
-    return this.axios.post('/tareas', params);
+    return this.axios.post('/api/tareas', data);
   }
 
   // Actualizar tarea existente
   async updateTask(data) {
-    return this.axios.put('/tareas', data);
+    return this.axios.put('/api/tareas', data);
   }
 
   // Eliminar tarea
   async deleteTask(id) {
-    return this.axios.delete(`/tareas/delete/${id}`);
+    return this.axios.delete(`/api/tareas/delete/${id}`);
   }
 
   // Marcar tarea como completada
   async completeTask(id) {
-    return this.axios.put(`/tareas/completar/${id}`);
+    return this.axios.put(`/api/tareas/completar/${id}`);
   }
 
-  // Obtener sectores disponibles
+  // Obtener sectores disponibles (sin JWT)
   async getSectors() {
-    return this.axios.get('/sectores');
+    return axios.get(`${API_URL}/api/sectores`);
   }
 
   // Obtener estadísticas de tareas por sector

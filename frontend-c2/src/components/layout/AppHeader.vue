@@ -21,10 +21,6 @@
       <nav class="nav" :class="{ 'nav-open': isMenuOpen }">
         <ul class="nav-list">
           <li><router-link to="/" class="nav-link" active-class="active">Home</router-link></li>
-
-          <li v-if="isLoggedIn">
-            <router-link to="/client" class="nav-link">Gestión de tareas</router-link>
-          </li>
           
           <li>
             <router-link to="/how-works" class="nav-link" data-tooltip="Gestión de tareas y más">

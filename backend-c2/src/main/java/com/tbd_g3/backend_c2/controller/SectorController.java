@@ -6,6 +6,7 @@ import com.tbd_g3.backend_c2.service.SectorService;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sectores")
+@CrossOrigin("*")
 public class SectorController {
 
     @Autowired
@@ -45,8 +47,6 @@ public class SectorController {
         SectorDTO sector = sectorService.buscarSectorConMasTareasCompletadasEn5km(userLocation);
         return ResponseEntity.ok(sector);
     }
-
-
 
 }
 

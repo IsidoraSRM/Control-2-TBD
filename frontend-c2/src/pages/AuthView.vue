@@ -30,13 +30,27 @@
             <input v-model="registerData.contrasena" type="password" id="register-contrasena" required />
             <label for="register-contrasena">Contraseña</label>
           </div>
-          <div class="input-group">
-            <input v-model.number="registerData.latitud" type="number" step="any" id="register-latitud" required />
-            <label for="register-latitud">Latitud</label>
-          </div>
-          <div class="input-group">
-            <input v-model.number="registerData.longitud" type="number" step="any" id="register-longitud" required />
-            <label for="register-longitud">Longitud</label>
+          <div class="map-section">
+            <label>Selecciona tu ubicación en el mapa</label>
+            <div class="map-container" style="margin-bottom: 1rem;">
+              <l-map
+                :zoom="mapZoom"
+                :center="marker || mapCenter"
+                style="height: 250px; width: 100%;"
+                @click="onMapClick"
+              >
+                <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <l-marker
+                  v-if="marker"
+                  :lat-lng="marker"
+                  :icon="getMarkerIcon('pending')"
+                />
+              </l-map>
+            </div>
+            <div v-if="registerData.latitud !== null && registerData.longitud !== null" class="coordinates-info" style="text-align:center; margin-bottom: 1rem;">
+              <span>Latitud: {{ registerData.latitud?.toFixed(6) }}</span> |
+              <span>Longitud: {{ registerData.longitud?.toFixed(6) }}</span>
+            </div>
           </div>
         </template>
         <button 
@@ -63,6 +77,9 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { getMarkerIcon } from '../utils/mapIcons';
 
 const router = useRouter();
 const isLogin = ref(true);
@@ -87,6 +104,17 @@ const registerData = ref({
   latitud: null,
   longitud: null
 });
+
+const mapCenter = ref([-33.45, -70.65]);
+const mapZoom = ref(13);
+const marker = ref(null);
+
+function onMapClick(e) {
+  const { lat, lng } = e.latlng || e;
+  registerData.value.latitud = lat;
+  registerData.value.longitud = lng;
+  marker.value = [lat, lng];
+}
 
 // Computed para determinar si el botón debe ser evasivo
 const shouldButtonBeEvasive = computed(() => {
@@ -199,8 +227,8 @@ onMounted(() => {
     const rect = cardRef.value.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    const rotateX = (e.clientY - centerY) / 85;
-    const rotateY = (centerX - e.clientX) / 85;
+    const rotateX = (e.clientY - centerY) / 95;
+    const rotateY = (centerX - e.clientX) / 90;
     cardRef.value.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
   };
   const handleMouseLeave = () => {

@@ -2,6 +2,7 @@ package com.tbd_g3.backend_c2.repository;
 
 import com.tbd_g3.backend_c2.entity.SectorEntity;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -4,6 +4,7 @@ import com.tbd_g3.backend_c2.dto.SectorDTO;
 import com.tbd_g3.backend_c2.entity.SectorEntity;
 import com.tbd_g3.backend_c2.repository.SectorRepository;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

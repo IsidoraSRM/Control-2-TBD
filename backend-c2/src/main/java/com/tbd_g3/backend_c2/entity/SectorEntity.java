@@ -2,7 +2,7 @@ package com.tbd_g3.backend_c2.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 @Entity
 @Table(name = "sectores")
@@ -16,6 +16,6 @@ public class SectorEntity {
     private String nombre;
     private String descripcion;
 
-    @Column(columnDefinition = "geometry(Point,4326)")
-    private Point localizacion;
+    @Column(columnDefinition = "geometry(Polygon,4326)")
+    private Polygon localizacion;
 }

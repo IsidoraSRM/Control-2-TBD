@@ -41,6 +41,12 @@ router.beforeEach((to, from, next) => {
   console.log('user.role:', user?.role);
   console.log('requiresRole:', requiresRole?.meta?.role);
 
+  // Redirigir a /client si el usuario está autenticado y va a la ruta principal
+  if (to.path === '/' && user) {
+    next('/client')
+    return
+  }
+
   if (requiresAuth && !user) {
     next('/login')
   } else if (requiresRole) {

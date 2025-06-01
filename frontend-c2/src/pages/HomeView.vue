@@ -90,7 +90,7 @@ const markers = ref([
     <section class="final-cta">
       <h2>¿Listo para optimizar tu gestión?</h2>
       <p>Comienza a gestionar tus tareas de manera eficiente y segura.</p>
-      <router-link to="/login" class="cta-button">Registrarse Gratis</router-link>
+      <router-link to="/login" class="cta-button">Registrarse</router-link>
     </section>
   </div>
 </template>
@@ -157,7 +157,7 @@ const markers = ref([
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 200px;
+  width: 240px;
   text-align: center;
   display: inline-block;
   text-decoration: none;
@@ -198,8 +198,20 @@ const markers = ref([
 
 .map-container {
   width: 100%;
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-blue);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+#map-tarea {
+  width: 100%;
   height: 100%;
-  z-index: 1;
+  min-height: 300px;
+  min-width: 200px;
+  display: block;
 }
 
 /* Features Section */
