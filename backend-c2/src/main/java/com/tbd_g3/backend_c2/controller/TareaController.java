@@ -147,6 +147,7 @@ public class TareaController {
     }
     //consulta 7
     @GetMapping("/cantidad-tareas-por-usuario-por-sector")
+    @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
     public ResponseEntity<List<Object[]>> getCantidadTareasPorUsuarioPorSector() {
         List<Object[]> resultados = tareaService.obtenerCantidadTareasPorUsuarioPorSector();
         if (resultados.isEmpty()) {

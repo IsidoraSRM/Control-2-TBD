@@ -96,6 +96,19 @@
               <span>Sectores: {{ sectores.length }}</span>
             </div>
           </div>
+
+          <!-- Notificaciones de tareas próximas a vencer -->
+          <div v-if="tareasProximasAVencer.length" class="alerta-vencimiento">
+            <h4 style="color: orange; margin: 1rem 0 0.5rem 0;">⚠️ Tareas próximas a vencer</h4>
+            <ul>
+              <li v-for="tarea in tareasProximasAVencer" :key="tarea.idtarea" style="color: #222;">
+                <strong>{{ tarea.titulo }}</strong> - Vence el {{ tarea.fechavencimiento }}<br>
+                <span style="font-size: 0.95em;">Sector: {{ sectorNombre(tarea.idsector) }}</span>
+              </li>
+            </ul>
+          </div>
+          <!-- Fin notificaciones -->
+
           <div class="tasks-table-container">
             <table class="tasks-table">
               <thead>
@@ -326,6 +339,21 @@ async function crearTareaDesdeModal(taskData) {
   showTaskModal.value = false
   await fetchTasks()
 }
+
+// --- Notificaciones de tareas próximas a vencer ---
+const tareasProximasAVencer = computed(() => {
+  const hoy = new Date();
+  return tareas.value.filter(tarea => {
+    // Solo tareas del usuario logueado y pendientes
+    const idUsuario = currentUser.value?.idusuario || currentUser.value?.userId;
+    if (tarea.idusuario !== idUsuario) return false;
+    if (tarea.estado && tarea.estado !== "PENDIENTE") return false;
+    // Calcular días hasta vencimiento
+    const fechaVenc = new Date(tarea.fechavencimiento);
+    const diffDias = (fechaVenc - hoy) / (1000 * 60 * 60 * 24);
+    return diffDias >= 0 && diffDias <= 3;
+  });
+});
 </script>
 
 <style scoped>
@@ -658,6 +686,15 @@ async function crearTareaDesdeModal(taskData) {
   border: 1px solid var(--border-blue);
   margin-bottom: 1rem;
   display: block;
+}
+
+.alerta-vencimiento {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #222;
 }
 
 @media (max-width: 1200px) {
