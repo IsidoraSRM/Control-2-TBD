@@ -225,7 +225,10 @@ const fetchSectores = async () => {
 }
 const fetchStats = async () => {
   const service = new TaskService()
-  stats.value = await service.getStats(currentUser.value.userId)
+  const userId = currentUser.value?.idusuario || currentUser.value?.userId
+  if (userId) {
+    stats.value = await service.getStats(userId)
+  }
 }
 const crearTarea = async () => {
   const service = new TaskService()

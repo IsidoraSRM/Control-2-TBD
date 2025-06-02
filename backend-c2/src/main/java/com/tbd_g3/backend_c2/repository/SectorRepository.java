@@ -12,7 +12,7 @@ public interface SectorRepository extends JpaRepository<SectorEntity, Integer> {
     @Query(value = """
         SELECT s FROM SectorEntity s 
         JOIN TareaEntity t ON t.idsector = s.idsector
-        WHERE t.estado = 'completada' 
+        WHERE t.estado = 'COMPLETADA' 
         AND function('ST_DWithin', s.localizacion, :userLocation, 2000) = true
         GROUP BY s.idsector
         ORDER BY COUNT(t.idtarea) DESC
@@ -24,7 +24,7 @@ public interface SectorRepository extends JpaRepository<SectorEntity, Integer> {
     @Query(value = """
         SELECT s FROM SectorEntity s 
         JOIN TareaEntity t ON t.idsector = s.idsector
-        WHERE t.estado = 'completada' 
+        WHERE t.estado = 'COMPLETADA' 
         AND function('ST_DWithin', s.localizacion, :userLocation, 5000) = true
         GROUP BY s.idsector
         ORDER BY COUNT(t.idtarea) DESC

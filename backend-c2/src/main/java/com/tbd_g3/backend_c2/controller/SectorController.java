@@ -38,7 +38,7 @@ public class SectorController {
 
         return ResponseEntity.ok(sector);
     }
-
+    //consulta 8
     @GetMapping("/sector-top-5km")
     public ResponseEntity<SectorDTO> obtenerSectorTop5km(@RequestParam double lon, @RequestParam double lat) {
         Point userLocation = new GeometryFactory().createPoint(new Coordinate(lon, lat));

@@ -176,7 +176,12 @@ const handleLogin = async () => {
     const response = await axios.post(`${API_URL}/auth/login`, loginData.value);
     localStorage.setItem('user', JSON.stringify(response.data));
     error.value = '¡Login exitoso!';
-    router.push('/client');
+    // Redirigir según el rol
+    if (response.data.role === 'ADMIN') {
+      router.push('/admin');
+    } else {
+      router.push('/client');
+    }
   } catch (err) {
     error.value = err.response?.data || 'Error al iniciar sesión';
   } finally {

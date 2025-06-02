@@ -105,7 +105,9 @@ public class TareaController {
         return ResponseEntity.ok(tarea);
     }
 
+    //consulta 5
     @GetMapping("/sectores-pendientes")
+    @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
     public ResponseEntity<List<SectorDTO>> getSectoresConMasTareasPendientes() {
         List<SectorDTO> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
         if (sectores.isEmpty()) {
@@ -113,7 +115,7 @@ public class TareaController {
         }
         return ResponseEntity.ok(sectores);
     }
-
+    //consulta 6
     @GetMapping("/pendiente-cercana/{idUsuario}")
     @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
     public ResponseEntity<Object[]> getTareaPendienteMasCercana(@PathVariable Integer idUsuario) {
@@ -123,7 +125,7 @@ public class TareaController {
         }
         return ResponseEntity.ok(tarea);
     }
-
+    //consulta 4
     @GetMapping("/promedio-distancia/{idUsuario}")
     @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
     public ResponseEntity<Object[]> getPromedioDistanciaTareasCompletadas(@PathVariable Integer idUsuario) {
@@ -133,7 +135,7 @@ public class TareaController {
         }
         return ResponseEntity.ok(promedio);
     }
-
+    //consulta 9
     @GetMapping("/promedio-global-distancia-tareas-completadas")
     public ResponseEntity<Double> getPromedioGlobalDistanciaTareasCompletadas() {
         Double promedio = tareaService.obtenerPromedioGlobalDistanciaTareasCompletadas();
@@ -142,7 +144,7 @@ public class TareaController {
         }
         return ResponseEntity.ok(promedio);
     }
-
+    //consulta 7
     @GetMapping("/cantidad-tareas-por-usuario-por-sector")
     public ResponseEntity<List<Object[]>> getCantidadTareasPorUsuarioPorSector() {
         List<Object[]> resultados = tareaService.obtenerCantidadTareasPorUsuarioPorSector();
@@ -151,5 +153,4 @@ public class TareaController {
         }
         return ResponseEntity.ok(resultados);
     }
-
 }

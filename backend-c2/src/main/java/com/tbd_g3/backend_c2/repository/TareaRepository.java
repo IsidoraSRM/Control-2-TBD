@@ -57,6 +57,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
             sectores s ON t.idsector = s.idsector
         WHERE 
             t.estado = 'PENDIENTE'
+            AND t.idusuario = :idUsuario
         ORDER BY 
             distancia_metros ASC
         LIMIT 1

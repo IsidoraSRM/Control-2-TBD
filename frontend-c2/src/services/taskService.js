@@ -50,7 +50,7 @@ class TaskService {
 
   // Eliminar tarea
   async deleteTask(id) {
-    return this.axios.delete(`/api/tareas/delete/${id}`);
+    return this.axios.delete(`/api/tareas/${id}`);
   }
 
   // Marcar tarea como completada
@@ -66,7 +66,7 @@ class TaskService {
   // Obtener estadísticas de tareas por sector
   async getTaskStatsBySector(userId) {
     try {
-      return await this.axios.get(`/tareas/estadisticas/sector/${userId}`);
+      return await this.axios.get(`/api/tareas/estadisticas/sector/${userId}`);
     } catch (error) {
       this.handleError(error);
     }
@@ -75,7 +75,7 @@ class TaskService {
   // Obtener tareas por vencer
   async getUpcomingTasks(userId) {
     try {
-      return await this.axios.get(`/tareas/proximas/${userId}`);
+      return await this.axios.get(`/api/tareas/proximas/${userId}`);
     } catch (error) {
       this.handleError(error);
     }
@@ -84,10 +84,19 @@ class TaskService {
   // Obtener estadísticas de tareas
   async getStats(userId) {
     // Promedio distancia tareas completadas
-    const prom = await this.axios.get(`/tareas/promedio-distancia/${userId}`);
+    const prom = await this.axios.get(`/api/tareas/promedio-distancia/${userId}`);
     // Cantidad tareas por usuario por sector
-    const cant = await this.axios.get('/tareas/cantidad-tareas-por-usuario-por-sector');
+    const cant = await this.axios.get('/api/tareas/cantidad-tareas-por-usuario-por-sector');
     return { promedio: prom.data, cantidad: cant.data };
+  }
+
+  // Obtener sectores con más tareas pendientes
+  async getSectoresConMasTareasPendientes() {
+    try {
+      return await this.axios.get('/api/tareas/sectores-pendientes');
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   // Manejo de errores
