@@ -320,15 +320,17 @@
           </div>
         </div>
         <div class="table-container">
-          <table v-if="promedioDistancia !== null">
+          <table v-if="promedioDistancia !== null && Array.isArray(promedioDistancia)">
             <thead>
               <tr>
+                <th>Usuario</th>
                 <th>Promedio Distancia (m)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>{{ promedioDistancia }}</td>
+                <td>{{ promedioDistancia[1] }}</td>
+                <td>{{ promedioDistancia[2] ? promedioDistancia[2].toFixed(2) : '' }}</td>
               </tr>
             </tbody>
           </table>
@@ -494,8 +496,7 @@ async function ejecutarConsultaPromedioDistancia() {
   const service = new TaskService();
   try {
     const response = await service.axios.get(`/api/tareas/promedio-distancia/${idUsuarioConsulta4.value}`);
-    // El backend retorna un arreglo, tomamos el primer valor si existe
-    promedioDistancia.value = Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null;
+    promedioDistancia.value = response.data;
     consultaPromedioDistanciaEjecutada.value = true;
   } catch (error) {
     promedioDistancia.value = null;
