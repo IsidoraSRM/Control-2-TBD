@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -16,5 +17,11 @@ public class UsuarioService {
     public List<UsuarioEntity> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
+
+    public UsuarioEntity findById(Integer id) {
+        Optional<UsuarioEntity> userOptional = usuarioRepository.findById(id);
+        return userOptional.orElse(null);
+    }
+
 
 }
