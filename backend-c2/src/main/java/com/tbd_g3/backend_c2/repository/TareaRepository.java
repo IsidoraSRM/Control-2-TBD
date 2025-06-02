@@ -160,7 +160,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
     JOIN 
         sectores s ON t.idsector = s.idsector
     WHERE 
-        LOWER(t.estado) = 'COMPLETADA'
+        t.estado = 'COMPLETADA'
     GROUP BY 
         u.nombreusuario, s.nombre
     ORDER BY 
