@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.locationtech.jts.geom.Point;
@@ -146,11 +147,18 @@ public class TareaService {
     }
 
     // ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
-    public List<SectorDTO> obtenerSectoresConMasTareasPendientes() {
-        List<SectorEntity> sectores = tareaRepository.findSectoresConMasTareasPendientes();
-        return sectores.stream()
-                .map(SectorDTO::new)
-                .collect(Collectors.toList());
+    public List<SectorPendientesDTO> obtenerSectoresConMasTareasPendientes() {
+        List<Object[]> results = tareaRepository.findSectoresConMasTareasPendientesConCantidad();
+        List<SectorPendientesDTO> dtos = new ArrayList<>();
+        for (Object[] row : results) {
+            SectorPendientesDTO dto = new SectorPendientesDTO();
+            dto.setIdsector(((Number) row[0]).intValue());
+            dto.setNombre((String) row[1]);
+            dto.setDescripcion((String) row[2]);
+            dto.setCantidadTareasPendientes(((Number) row[3]).intValue());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     // ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?

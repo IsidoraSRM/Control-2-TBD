@@ -108,13 +108,14 @@ public class TareaController {
     //consulta 5
     @GetMapping("/sectores-pendientes")
     @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})
-    public ResponseEntity<List<SectorDTO>> getSectoresConMasTareasPendientes() {
-        List<SectorDTO> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
+    public ResponseEntity<List<SectorPendientesDTO>> getSectoresConMasTareasPendientes() {
+        List<SectorPendientesDTO> sectores = tareaService.obtenerSectoresConMasTareasPendientes();
         if (sectores.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(sectores);
     }
+
     //consulta 6
     @GetMapping("/pendiente-cercana/{idUsuario}")
     @Secured({"ROLE_ADMIN", "ROLE_TRABAJADOR", "ROLE_CLIENTE"})

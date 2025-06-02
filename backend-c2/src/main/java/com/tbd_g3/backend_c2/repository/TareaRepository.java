@@ -65,26 +65,26 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
     List<Object[]> findTareaMasCercana(@Param("idUsuario") Integer idUsuario);
 
     // ¿En qué sectores geográficos se concentran la mayoría de las tareas pendientes?
-    @Query(value = """
-        SELECT s 
-        FROM SectorEntity s
-        WHERE s.idsector IN (
-            SELECT t.idsector
-            FROM TareaEntity t
-            WHERE t.estado = 'PENDIENTE'
-            GROUP BY t.idsector
-            HAVING COUNT(t.idtarea) = (
-                SELECT MAX(cantidad)
-                FROM (
-                    SELECT COUNT(*) AS cantidad
-                    FROM TareaEntity
-                    WHERE estado = 'PENDIENTE'
-                    GROUP BY idsector
-                ) AS subquery
-            )
+    @Query(
+            value = """
+        SELECT s.idsector, s.nombre, s.descripcion, COUNT(t.idtarea) AS cantidad
+        FROM sectores s
+        JOIN tareas t ON s.idsector = t.idsector
+        WHERE t.estado = 'PENDIENTE'
+        GROUP BY s.idsector, s.nombre, s.descripcion
+        HAVING COUNT(t.idtarea) = (
+            SELECT MAX(cantidad)
+            FROM (
+                SELECT COUNT(*) AS cantidad
+                FROM tareas
+                WHERE estado = 'PENDIENTE'
+                GROUP BY idsector
+            ) sub2
         )
-        """)
-    List<SectorEntity> findSectoresConMasTareasPendientes();
+        """,
+            nativeQuery = true
+    )
+    List<Object[]> findSectoresConMasTareasPendientesConCantidad();
 
     // ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
     @Query(value = """
@@ -160,7 +160,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Integer> {
     JOIN 
         sectores s ON t.idsector = s.idsector
     WHERE 
-        LOWER(t.estado) = 'completada'
+        LOWER(t.estado) = 'COMPLETADA'
     GROUP BY 
         u.nombreusuario, s.nombre
     ORDER BY 

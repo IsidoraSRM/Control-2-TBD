@@ -109,14 +109,12 @@
               <tr>
                 <th>ID Sector</th>
                 <th>Nombre</th>
-                <th>Cantidad de Tareas Completadas</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>{{ topSector.idsector }}</td>
                 <td>{{ topSector.nombre }}</td>
-                <td>{{ topSector.cantidadTareasCompletadas || topSector.cantidad_tareas_completadas || topSector.cantidad || 0 }}</td>
               </tr>
             </tbody>
           </table>
@@ -126,39 +124,37 @@
         </div>
       </div>
 
-      <!-- Panel de Promedio de distancia de tareas completadas -->
       <div class="query-panel">
         <div class="panel-header">
           <div>
-            <h2>Consulta 4: Promedio de distancia de tareas completadas</h2>
-            <p class="query-desc">Obtener promedio de distancia de tareas completadas para el usuario.</p>
+            <h2>Consulta 4: Promedio global de distancia de tareas completadas</h2>
+            <p class="query-desc">¿Cuál es el promedio de distancia entre las tareas completadas y el punto registrado del usuario?</p>
           </div>
-          <div class="input-query-group">
-            <input v-model="idUsuarioConsulta4" type="number" min="1" placeholder="ID de usuario" class="input-id" />
-            <button @click="ejecutarConsultaPromedioDistancia" class="btn-query">
-              <i class="fas fa-play"></i>
-              Ejecutar Consulta
-            </button>
-          </div>
+          <button @click="ejecutarConsultaPromedioGlobalDistancia" class="btn-query">
+            <i class="fas fa-play"></i>
+            Ejecutar Consulta
+          </button>
         </div>
         <div class="table-container">
-          <table v-if="promedioDistancia !== null">
+          <table v-if="promedioGlobalDistancia !== null">
             <thead>
               <tr>
-                <th>Promedio Distancia (m)</th>
+                <th>Promedio Global Distancia (m)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>{{ promedioDistancia }}</td>
+                <td>{{ promedioGlobalDistancia.toFixed(2) }}</td>
               </tr>
             </tbody>
           </table>
-          <div v-else-if="consultaPromedioDistanciaEjecutada" class="no-data">
-            No se encontró promedio de distancia para ese usuario.
+          <div v-else-if="consultaPromedioGlobalDistanciaEjecutada" class="no-data">
+            No hay datos disponibles.
           </div>
         </div>
       </div>
+
+      
 
       <!-- Panel de Sectores con más tareas pendientes -->
       <div class="query-panel">
@@ -194,6 +190,155 @@
           </div>
         </div>
       </div>
+
+      <!-- Panel de Tarea pendiente más cercana por usuario -->
+      <div class="query-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Consulta 6: Tarea pendiente más cercana a un usuario</h2>
+            <p class="query-desc">Busca la tarea pendiente más cercana a un usuario ingresando su ID.</p>
+          </div>
+          <div class="input-query-group">
+            <input v-model="idUsuarioConsulta6" type="number" min="1" placeholder="ID de usuario" class="input-id" />
+            <button @click="ejecutarConsultaPendienteCercana" class="btn-query">
+              <i class="fas fa-play"></i>
+              Ejecutar Consulta
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table v-if="tareaPendienteCercana">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>ID Tarea</th>
+                <th>Título</th>
+                <th>Sector</th>
+                <th>Distancia (m)</th>
+                <th>Fecha de vencimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ tareaPendienteCercana[0] }}</td>
+                <td>{{ tareaPendienteCercana[1] }}</td>
+                <td>{{ tareaPendienteCercana[2] }}</td>
+                <td>{{ tareaPendienteCercana[3] }}</td>
+                <td>{{ tareaPendienteCercana[8] ? tareaPendienteCercana[8].toFixed(2) : '' }}</td>
+                <td>{{ tareaPendienteCercana[9] }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else-if="consultaPendienteCercanaEjecutada" class="no-data">
+            No se encontró una tarea pendiente cercana para ese usuario.
+          </div>
+        </div>
+      </div>
+
+      <div class="query-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Consulta 7: Cantidad de tareas por usuario y sector</h2>
+            <p class="query-desc">Muestra cuántas tareas ha realizado cada usuario por sector.</p>
+          </div>
+          <button @click="ejecutarConsultaCantidadTareasPorUsuarioPorSector" class="btn-query">
+            <i class="fas fa-play"></i>
+            Ejecutar Consulta
+          </button>
+        </div>
+        <div class="table-container">
+          <table v-if="cantidadTareasPorUsuarioPorSector.length > 0">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Sector</th>
+                <th>Cantidad de Tareas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(fila, idx) in cantidadTareasPorUsuarioPorSector" :key="idx">
+                <td>{{ fila[0] }}</td>
+                <td>{{ fila[1] }}</td>
+                <td>{{ fila[2] }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else-if="consultaCantidadTareasPorUsuarioPorSectorEjecutada" class="no-data">
+            No hay datos disponibles.
+          </div>
+        </div>
+      </div>
+
+      <div class="query-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Consulta 8: Sector con más tareas completadas (5km)</h2>
+            <p class="query-desc">Busca el sector con más tareas completadas para un usuario en un radio de 5km.</p>
+          </div>
+          <div class="input-query-group">
+            <input v-model="idUsuarioCercanoConsulta8" type="number" min="1" placeholder="ID de usuario" class="input-id" />
+            <button @click="ejecutarConsultaTopSector5km" class="btn-query">
+              <i class="fas fa-play"></i>
+              Ejecutar Consulta
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table v-if="topSector5km">
+            <thead>
+              <tr>
+                <th>ID Sector</th>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ topSector5km.idsector }}</td>
+                <td>{{ topSector5km.nombre }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else-if="consultaTopSector5kmEjecutada" class="no-data">
+            No se encontró un sector con tareas completadas cerca de ese usuario (5km).
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Promedio de distancia de tareas completadas -->
+      <div class="query-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Consulta 9: Promedio de distancia de tareas completadas</h2>
+            <p class="query-desc">Obtener promedio de distancia de tareas completadas para el usuario.</p>
+          </div>
+          <div class="input-query-group">
+            <input v-model="idUsuarioConsulta4" type="number" min="1" placeholder="ID de usuario" class="input-id" />
+            <button @click="ejecutarConsultaPromedioDistancia" class="btn-query">
+              <i class="fas fa-play"></i>
+              Ejecutar Consulta
+            </button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table v-if="promedioDistancia !== null">
+            <thead>
+              <tr>
+                <th>Promedio Distancia (m)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ promedioDistancia }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else-if="consultaPromedioDistanciaEjecutada" class="no-data">
+            No se encontró promedio de distancia para ese usuario.
+          </div>
+        </div>
+      </div>
+
+
 
     </div>
   </div>
@@ -240,6 +385,20 @@ const idUsuarioConsulta4 = ref("");
 const promedioDistancia = ref(null);
 const consultaPromedioDistanciaEjecutada = ref(false);
 
+const idUsuarioConsulta6 = ref("");
+const tareaPendienteCercana = ref(null);
+const consultaPendienteCercanaEjecutada = ref(false);
+
+const cantidadTareasPorUsuarioPorSector = ref([]);
+const consultaCantidadTareasPorUsuarioPorSectorEjecutada = ref(false);
+
+const idUsuarioCercanoConsulta8 = ref("");
+const topSector5km = ref(null);
+const consultaTopSector5kmEjecutada = ref(false);
+
+const promedioGlobalDistancia = ref(null);
+const consultaPromedioGlobalDistanciaEjecutada = ref(false);
+
 onMounted(async () => {
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
   if (!user || user.role !== 'ADMIN') {
@@ -285,15 +444,9 @@ async function ejecutarConsultaTopSector() {
   consultaTopSectorEjecutada.value = false;
   if (!idUsuarioCercanoConsulta3.value) return;
   try {
-    // Obtener usuario por ID
-    const usuarioResponse = await (await import('../services/taskService')).default.prototype.axios.get(`/api/usuarios/${idUsuarioCercanoConsulta3.value}`);
-    const usuario = usuarioResponse.data;
-    if (!usuario || !usuario.localizacion) throw new Error("Usuario no encontrado o sin localización");
-    // Extraer lon/lat (GeoJSON: [lon, lat])
-    const [lon, lat] = usuario.localizacion.coordinates;
-    // Llamar al endpoint de top-sector
+    // Llamar al nuevo endpoint con el id de usuario
     const service = new TaskService();
-    const sectorResponse = await service.axios.get(`/api/sectores/top-sector?lon=${lon}&lat=${lat}`);
+    const sectorResponse = await service.axios.get(`/api/sectores/top-sector-2km?userId=${idUsuarioCercanoConsulta3.value}`);
     topSector.value = sectorResponse.data;
     consultaTopSectorEjecutada.value = true;
   } catch (error) {
@@ -348,6 +501,68 @@ async function ejecutarConsultaPromedioDistancia() {
     promedioDistancia.value = null;
     consultaPromedioDistanciaEjecutada.value = true;
     console.error('Error ejecutando consulta de promedio de distancia:', error);
+  }
+}
+
+async function ejecutarConsultaPendienteCercana() {
+  tareaPendienteCercana.value = null;
+  consultaPendienteCercanaEjecutada.value = false;
+  if (!idUsuarioConsulta6.value) return;
+  const service = new TaskService();
+  try {
+    const response = await service.axios.get(`/api/tareas/pendiente-cercana/${idUsuarioConsulta6.value}`);
+    tareaPendienteCercana.value = response.data;
+    consultaPendienteCercanaEjecutada.value = true;
+  } catch (error) {
+    tareaPendienteCercana.value = null;
+    consultaPendienteCercanaEjecutada.value = true;
+    console.error('Error ejecutando consulta de tarea pendiente cercana:', error);
+  }
+}
+
+async function ejecutarConsultaCantidadTareasPorUsuarioPorSector() {
+  cantidadTareasPorUsuarioPorSector.value = [];
+  consultaCantidadTareasPorUsuarioPorSectorEjecutada.value = false;
+  const service = new TaskService();
+  try {
+    const response = await service.axios.get('/api/tareas/cantidad-tareas-por-usuario-por-sector');
+    cantidadTareasPorUsuarioPorSector.value = response.data;
+    consultaCantidadTareasPorUsuarioPorSectorEjecutada.value = true;
+  } catch (error) {
+    cantidadTareasPorUsuarioPorSector.value = [];
+    consultaCantidadTareasPorUsuarioPorSectorEjecutada.value = true;
+    console.error('Error ejecutando consulta de cantidad de tareas por usuario por sector:', error);
+  }
+}
+
+async function ejecutarConsultaTopSector5km() {
+  topSector5km.value = null;
+  consultaTopSector5kmEjecutada.value = false;
+  if (!idUsuarioCercanoConsulta8.value) return;
+  try {
+    const service = new TaskService();
+    const sectorResponse = await service.axios.get(`/api/sectores/top-sector-5km?userId=${idUsuarioCercanoConsulta8.value}`);
+    topSector5km.value = sectorResponse.data;
+    consultaTopSector5kmEjecutada.value = true;
+  } catch (error) {
+    topSector5km.value = null;
+    consultaTopSector5kmEjecutada.value = true;
+    console.error('Error ejecutando consulta de sector 5km:', error);
+  }
+}
+
+async function ejecutarConsultaPromedioGlobalDistancia() {
+  promedioGlobalDistancia.value = null;
+  consultaPromedioGlobalDistanciaEjecutada.value = false;
+  const service = new TaskService();
+  try {
+    const response = await service.axios.get('/api/tareas/promedio-global-distancia-tareas-completadas');
+    promedioGlobalDistancia.value = response.data;
+    consultaPromedioGlobalDistanciaEjecutada.value = true;
+  } catch (error) {
+    promedioGlobalDistancia.value = null;
+    consultaPromedioGlobalDistanciaEjecutada.value = true;
+    console.error('Error ejecutando consulta de promedio global de distancia:', error);
   }
 }
 </script>

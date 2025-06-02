@@ -10,45 +10,6 @@
       </div>
     </header>
 
-    <!-- Panel principal con estadísticas -->
-    <div class="stats-grid">
-      <div class="stat-card pending">
-        <div class="stat-icon">
-          <i class="fas fa-tasks"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Tareas Pendientes</h3>
-          <div class="stat-value">{{ stats.pendingTasks }}</div>
-        </div>
-      </div>
-      <div class="stat-card completed">
-        <div class="stat-icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Tareas Completadas</h3>
-          <div class="stat-value">{{ stats.completedTasks }}</div>
-        </div>
-      </div>
-      <div class="stat-card sectors">
-        <div class="stat-icon">
-          <i class="fas fa-map-marked-alt"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Sectores Activos</h3>
-          <div class="stat-value">{{ stats.activeSectors }}</div>
-        </div>
-      </div>
-      <div class="stat-card distance">
-        <div class="stat-icon">
-          <i class="fas fa-route"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Distancia Promedio</h3>
-          <div class="stat-value">{{ stats.averageDistance.toFixed(2) }} km</div>
-        </div>
-      </div>
-    </div>
 
     <!-- Panel de control principal -->
     <div class="main-content">
