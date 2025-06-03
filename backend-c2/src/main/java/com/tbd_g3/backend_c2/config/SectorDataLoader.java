@@ -15,26 +15,25 @@ public class SectorDataLoader {
 
     @PostConstruct
     public void init() {
-        if (sectorRepository.count() == 0) {
-            GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-            // Polígono rectangular grande que cubre la mayor parte de la Región Metropolitana de Santiago
-            Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(-70.958, -33.083), // Norponiente
-                new Coordinate(-70.958, -33.890), // Surponiente
-                new Coordinate(-70.365, -33.890), // Suroriente
-                new Coordinate(-70.365, -33.083), // Nororiente
-                new Coordinate(-70.958, -33.083)  // Cierra el polígono
-            };
-            LinearRing shell = geometryFactory.createLinearRing(coordinates);
-            Polygon polygon = geometryFactory.createPolygon(shell, null);
+        // Polígono rectangular grande que cubre la mayor parte de la Región Metropolitana de Santiago
+        Coordinate[] coordinates = new Coordinate[]{
+            new Coordinate(-70.958, -33.083), // Norponiente
+            new Coordinate(-70.958, -33.890), // Surponiente
+            new Coordinate(-70.365, -33.890), // Suroriente
+            new Coordinate(-70.365, -33.083), // Nororiente
+            new Coordinate(-70.958, -33.083)  // Cierra el polígono
+        };
+        LinearRing shell = geometryFactory.createLinearRing(coordinates);
+        Polygon polygon = geometryFactory.createPolygon(shell, null);
 
-            SectorEntity sector = new SectorEntity();
-            sector.setNombre("Región Metropolitana (Aproximado)");
-            sector.setDescripcion("Sector de ejemplo que cubre la mayor parte de la Región Metropolitana de Santiago");
-            sector.setLocalizacion(polygon);
+        SectorEntity sector = new SectorEntity();
+        sector.setNombre("Región Metropolitana (Aproximado)");
+        sector.setDescripcion("Sector de ejemplo que cubre la mayor parte de la Región Metropolitana de Santiago");
+        sector.setLocalizacion(polygon);
 
-            sectorRepository.save(sector);
-        }
+        sectorRepository.save(sector);
+
     }
 } 

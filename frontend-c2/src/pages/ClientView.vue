@@ -223,7 +223,6 @@ onMounted(async () => {
   currentUser.value = user
   await fetchSectores()
   await fetchTasks()
-  await fetchStats()
 })
 
 const fetchTasks = async () => {
@@ -236,13 +235,7 @@ const fetchSectores = async () => {
   const res = await service.getSectors()
   sectores.value = res.data
 }
-const fetchStats = async () => {
-  const service = new TaskService()
-  const userId = currentUser.value?.idusuario || currentUser.value?.userId
-  if (userId) {
-    stats.value = await service.getStats(userId)
-  }
-}
+
 const crearTarea = async () => {
   const service = new TaskService()
   await service.createTask({

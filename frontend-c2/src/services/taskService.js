@@ -86,7 +86,6 @@ class TaskService {
     // Promedio distancia tareas completadas
     const prom = await this.axios.get(`/api/tareas/promedio-distancia/${userId}`);
     // Cantidad tareas por usuario por sector
-    const cant = await this.axios.get('/api/tareas/cantidad-tareas-por-usuario-por-sector');
     return { promedio: prom.data, cantidad: cant.data };
   }
 
