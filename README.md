@@ -38,7 +38,8 @@ git clone https://github.com/tu-usuario/Control-2-TBD.git
 cd Control-2-TBD
 2. Configuración de la Base de Datos
 
-  Crear una base de datos PostgreSQL llamda: control2 
+  - Crear una base de datos PostgreSQL llamada: control2 
+  - Ejecutar el script de inserción (inserts.sql) y poder tener usuarios de distinto tipo en la base de datos
 
   
 
@@ -60,8 +61,14 @@ cd Control-2-TBD
     - Despues para ejecutar el frontend: `npm run dev`      # Iniciar servidor de desarrollo
     
    La aplicación estará disponible en lacalhost
-
-VERSION MEDIANTE DOCKER
+5. Inicio de sesión por frontend
+   - Opción 1: registrar un usuario de tipo cliente mediante el formulario de registro de la interfaz del frontend.
+   - Opción 2: Iniciar sesion con uno de los clientes de la insersión de inserts.sql
+   - Opción 3: Iniciar sesion como Administrador con las siguientes credenciales
+     - email: admin@example.com
+     - contraseña: admin1
+     
+  VERSION MEDIANTE DOCKER
 
 🚢 Instalación y Ejecución con Docker Compose
 Para desplegar la aplicación con Docker Compose, sigue estos pasos:
