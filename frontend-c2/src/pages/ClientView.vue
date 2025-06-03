@@ -10,46 +10,6 @@
       </div>
     </header>
 
-    <!-- Panel principal con estadísticas -->
-    <div class="stats-grid">
-      <div class="stat-card pending">
-        <div class="stat-icon">
-          <i class="fas fa-tasks"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Tareas Pendientes</h3>
-          <div class="stat-value">{{ stats.pendingTasks }}</div>
-        </div>
-      </div>
-      <div class="stat-card completed">
-        <div class="stat-icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Tareas Completadas</h3>
-          <div class="stat-value">{{ stats.completedTasks }}</div>
-        </div>
-      </div>
-      <div class="stat-card sectors">
-        <div class="stat-icon">
-          <i class="fas fa-map-marked-alt"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Sectores Activos</h3>
-          <div class="stat-value">{{ stats.activeSectors }}</div>
-        </div>
-      </div>
-      <div class="stat-card distance">
-        <div class="stat-icon">
-          <i class="fas fa-route"></i>
-        </div>
-        <div class="stat-info">
-          <h3>Distancia Promedio</h3>
-          <div class="stat-value">{{ stats.averageDistance.toFixed(2) }} km</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Panel de control principal -->
     <div class="main-content">
       <div class="content-header">
@@ -133,6 +93,9 @@
                   </td>
                   <td class="sector-cell">{{ sectorNombre(t.idsector) }}</td>
                   <td class="actions-cell">
+                    <button @click="abrirEditarTarea(t)" class="btn-edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
                     <button 
                       @click="completarTarea(t.idtarea)" 
                       v-if="t.estado !== 'COMPLETADA'" 
@@ -190,6 +153,22 @@
       @close="showTaskModal = false"
       @save="handleTaskSave"
     />
+
+    <!-- Modal de edición de tarea -->
+    <div v-if="showEditModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Editar Tarea</h3>
+        <input v-model="tareaEditando.titulo" placeholder="Título" />
+        <input v-model="tareaEditando.descripcion" placeholder="Descripción" />
+        <input v-model="tareaEditando.fechavencimiento" type="date" placeholder="Fecha de vencimiento" />
+        <select v-model="tareaEditando.estado">
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="COMPLETADA">Completada</option>
+        </select>
+        <button @click="guardarEdicionTarea" class="btn-save">Guardar</button>
+        <button @click="showEditModal = false" class="btn-cancel">Cancelar</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -216,6 +195,8 @@ const mapZoom = ref(12)
 const mapCenter = ref([-33.45, -70.65])
 const tareaMarker = ref(null)
 const tareaSector = ref(null)
+const showEditModal = ref(false)
+const tareaEditando = ref({})
 
 onMounted(async () => {
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
@@ -347,6 +328,18 @@ const tareasProximasAVencer = computed(() => {
     return diffDias >= 0 && diffDias <= 3;
   });
 });
+
+function abrirEditarTarea(tarea) {
+  tareaEditando.value = { ...tarea }
+  showEditModal.value = true
+}
+
+async function guardarEdicionTarea() {
+  const service = new TaskService()
+  await service.updateTask(tareaEditando.value.idtarea, tareaEditando.value)
+  showEditModal.value = false
+  await fetchTasks()
+}
 </script>
 
 <style scoped>
@@ -648,7 +641,7 @@ const tareasProximasAVencer = computed(() => {
   gap: 0.5rem;
 }
 
-.btn-complete, .btn-delete {
+.btn-edit, .btn-complete, .btn-delete {
   width: 32px;
   height: 32px;
   border-radius: 6px;
@@ -657,6 +650,18 @@ const tareasProximasAVencer = computed(() => {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: #ffe58f;
+  color: #222;
+  border: 1px solid #ffe58f;
+  border-radius: 6px;
+  margin-right: 4px;
+}
+
+.btn-edit:hover {
+  background: #ffd666;
 }
 
 .btn-complete {
@@ -688,6 +693,49 @@ const tareasProximasAVencer = computed(() => {
   padding: 1rem;
   margin-bottom: 1rem;
   color: #222;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  min-width: 320px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-save {
+  background: #4ade80;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.btn-cancel {
+  background: #f87171;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
 }
 
 @media (max-width: 1200px) {

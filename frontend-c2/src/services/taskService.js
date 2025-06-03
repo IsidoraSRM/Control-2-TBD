@@ -44,8 +44,8 @@ class TaskService {
   }
 
   // Actualizar tarea existente
-  async updateTask(data) {
-    return this.axios.put('/api/tareas', data);
+  async updateTask(id, data) {
+    return this.axios.put(`/api/tareas/${id}`, data);
   }
 
   // Eliminar tarea
