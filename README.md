@@ -36,14 +36,16 @@ Aplicación full-stack para gestión de tareas con capacidades de georreferencia
 
 git clone https://github.com/tu-usuario/Control-2-TBD.git
 cd Control-2-TBD
-2. Configuración de la Base de Datos
+
+
+### 2. Configuración de la Base de Datos
 
   - Crear una base de datos PostgreSQL llamada: control2 
   - Ejecutar el script de inserción (inserts.sql) y poder tener usuarios de distinto tipo en la base de datos
 
   
 
-3. Configuración del Backend (Spring Boot)
+### 3. Configuración del Backend (Spring Boot)
     Abrir el proyecto en IntelliJ IDEA (recomendado).
 
     Configurar credenciales en backend-c2/src/main/resources/application.properties:
@@ -55,20 +57,20 @@ cd Control-2-TBD
     spring.jpa.hibernate.ddl-auto=update
     Ejecutar la aplicación (clic derecho → Run Application).
 
-4. Configuración del Frontend (Vue.js)
+### 4. Configuración del Frontend (Vue.js)
     - Ubicarse en la carpeta frontend-c2
     - Luego en la terminal ejecutar: `npm install`       # Instalar dependencias
     - Despues para ejecutar el frontend: `npm run dev`      # Iniciar servidor de desarrollo
     
    La aplicación estará disponible en lacalhost
-5. Inicio de sesión por frontend
+### 5. Inicio de sesión por frontend
    - Opción 1: registrar un usuario de tipo cliente mediante el formulario de registro de la interfaz del frontend.
    - Opción 2: Iniciar sesion con uno de los clientes de la insersión de inserts.sql
    - Opción 3: Iniciar sesion como Administrador con las siguientes credenciales
      - email: admin@example.com
      - contraseña: admin1
      
-  VERSION MEDIANTE DOCKER
+###   VERSION MEDIANTE DOCKER
 
 🚢 Instalación y Ejecución con Docker Compose
 Para desplegar la aplicación con Docker Compose, sigue estos pasos:
