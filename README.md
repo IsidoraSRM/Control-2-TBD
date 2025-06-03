@@ -38,11 +38,9 @@ git clone https://github.com/tu-usuario/Control-2-TBD.git
 cd Control-2-TBD
 2. Configuración de la Base de Datos
 
-  Crear una base de datos PostgreSQL:
+  Crear una base de datos PostgreSQL llamda: control2 
 
-  Opción A: Ejecutar script SQL ubicado 
-
-  Opción B: Usar la interfaz de registro del frontend.
+  
 
 3. Configuración del Backend (Spring Boot)
     Abrir el proyecto en IntelliJ IDEA (recomendado).
@@ -57,11 +55,11 @@ cd Control-2-TBD
     Ejecutar la aplicación (clic derecho → Run Application).
 
 4. Configuración del Frontend (Vue.js)
-    bash
-    cd frontend-c2
-    npm install       # Instalar dependencias
-    npm run dev      # Iniciar servidor de desarrollo
-    La aplicación estará disponible en: http://localhost:5173
+    - Ubicarse en la carpeta frontend-c2
+    - Luego en la terminal ejecutar: `npm install`       # Instalar dependencias
+    - Despues para ejecutar el frontend: `npm run dev`      # Iniciar servidor de desarrollo
+    
+   La aplicación estará disponible en lacalhost
 
 VERSION MEDIANTE DOCKER
 
