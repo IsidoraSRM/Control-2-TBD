@@ -17,14 +17,14 @@ VALUES (
 -- Usuarios Clientes (Región Metropolitana)
 (
     'Juan Pérez', 
-    '$2y$10$XZz5qN9sF1WJmUgK.5lYDeQN7wTkO1fLk7d2rRKlpBq3VYhH6d1uK',  -- cliente123
+    '$2y$10$bZM2F0RgXSxZCHa8fuTNq.dvH6gcT8Jr5H560GudHbYpCCL6YwPGG',  -- cliente1
     'juan.perez@example.com', 
     ST_GeomFromText('POINT(-70.5796 -33.4150)', 4326),  -- Providencia
     'CLIENTE'
 ),
 (
     'María González', 
-    '$2y$10$vGx2.TKjWpW9eF7rR8nZh.Lw4sSdYb5qN3fLmPkQrVcZtYhH2sXyD',  -- maria2023
+    '$2y$10$bZM2F0RgXSxZCHa8fuTNq.dvH6gcT8Jr5H560GudHbYpCCL6YwPGG',  -- cliente1
     'maria.gonzalez@example.com', 
     ST_GeomFromText('POINT(-70.5750 -33.4167)', 4326),  -- Las Condes
     'CLIENTE'
@@ -39,25 +39,27 @@ INSERT INTO public.usuarios (
     rol
 ) VALUES (
     'Carlos Rojas', 
-    '$2y$10$qWeRtYvU7iKjHpL9sT3Zz.5nMlP8oKj2fD4sV7bNcXzYhH3mXyD',  -- valpo456
+    '$2y$10$bZM2F0RgXSxZCHa8fuTNq.dvH6gcT8Jr5H560GudHbYpCCL6YwPGG',  -- cliente1
     'carlos.rojas@example.com', 
     ST_GeomFromText('POINT(-71.6200 -33.0450)', 4326),  -- Valparaíso
     'CLIENTE'
 ),
 (
     'Ana Silva', 
-    '$2y$10$sDfGhJkL9o8u7y6T5r4E0.Po9I8u7Y6T5R4E3W2Q1wZxYcVbNmLp',  -- ana789
+    '$2y$10$bZM2F0RgXSxZCHa8fuTNq.dvH6gcT8Jr5H560GudHbYpCCL6YwPGG',  -- cliente1
     'ana.silva@example.com', 
     ST_GeomFromText('POINT(-73.0496 -36.8267)', 4326),  -- Concepción
     'CLIENTE'
 ),
 (
     'Pedro Martínez', 
-    '$2y$10$tYgHujMkOl9I8u7Y6T5R4.E3W2Q1wZxYcVbNmLpK9o8u7y6T5r4E0',  -- pedro1011
+    '$2y$10$bZM2F0RgXSxZCHa8fuTNq.dvH6gcT8Jr5H560GudHbYpCCL6YwPGG',  -- cliente1
     'pedro.martinez@example.com', 
     ST_GeomFromText('POINT(-70.3989 -23.6339)', 4326),  -- Antofagasta
     'CLIENTE'
 );
+
+
 
 
 
