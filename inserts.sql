@@ -63,30 +63,28 @@ INSERT INTO public.usuarios (
 
 
 
--- insert de distintos sectores en Chile
+-- insert de distintos sectores en Chile convertidos a polígonos
 INSERT INTO sectores (nombre, descripcion, localizacion) VALUES
 -- Región Metropolitana
-('Construcción Santiago Centro', 'Obras de construcción en el centro de Santiago', ST_SetSRID(ST_MakePoint(-70.6682, -33.4489), 4326)),
-('Reparación Semáforos Providencia', 'Mantenimiento semáforos en Providencia', ST_SetSRID(ST_MakePoint(-70.6167, -33.4325), 4326)),
-('Mantención Calles Las Condes', 'Reparación de vías en Las Condes', ST_SetSRID(ST_MakePoint(-70.5750, -33.4167), 4326)),
+('Construcción Santiago Centro', 'Obras de construcción en el centro de Santiago', ST_Buffer(ST_SetSRID(ST_MakePoint(-70.6682, -33.4489), 4326), 0.01)),
+('Reparación Semáforos Providencia', 'Mantenimiento semáforos en Providencia', ST_Buffer(ST_SetSRID(ST_MakePoint(-70.6167, -33.4325), 4326), 0.01)),
+('Mantención Calles Las Condes', 'Reparación de vías en Las Condes', ST_Buffer(ST_SetSRID(ST_MakePoint(-70.5750, -33.4167), 4326), 0.01)),
 
 -- Valparaíso
-('Reparación Muelles Valparaíso', 'Mantención de muelles portuarios', ST_SetSRID(ST_MakePoint(-71.6200, -33.0450), 4326)),
-('Áreas Verdes Viña del Mar', 'Mantención de parques y jardines', ST_SetSRID(ST_MakePoint(-71.5517, -33.0245), 4326)),
+('Reparación Muelles Valparaíso', 'Mantención de muelles portuarios', ST_Buffer(ST_SetSRID(ST_MakePoint(-71.6200, -33.0450), 4326), 0.01)),
+('Áreas Verdes Viña del Mar', 'Mantención de parques y jardines', ST_Buffer(ST_SetSRID(ST_MakePoint(-71.5517, -33.0245), 4326), 0.01)),
 
 -- Concepción
-('Construcción Edificios Concepción', 'Nuevos proyectos inmobiliarios', ST_SetSRID(ST_MakePoint(-73.0496, -36.8267), 4326)),
-('Reparación Puentes Bío Bío', 'Mantención de infraestructura vial', ST_SetSRID(ST_MakePoint(-73.0786, -36.8144), 4326)),
+('Construcción Edificios Concepción', 'Nuevos proyectos inmobiliarios', ST_Buffer(ST_SetSRID(ST_MakePoint(-73.0496, -36.8267), 4326), 0.01)),
+('Reparación Puentes Bío Bío', 'Mantención de infraestructura vial', ST_Buffer(ST_SetSRID(ST_MakePoint(-73.0786, -36.8144), 4326), 0.01)),
 
 -- Antofagasta
-('Mantención Minera Escondida', 'Servicios para minería', ST_SetSRID(ST_MakePoint(-69.3481, -24.2627), 4326)),
-('Infraestructura Portuaria', 'Mejoras en puerto de Antofagasta', ST_SetSRID(ST_MakePoint(-70.3989, -23.6339), 4326)),
+('Mantención Minera Escondida', 'Servicios para minería', ST_Buffer(ST_SetSRID(ST_MakePoint(-69.3481, -24.2627), 4326), 0.01)),
+('Infraestructura Portuaria', 'Mejoras en puerto de Antofagasta', ST_Buffer(ST_SetSRID(ST_MakePoint(-70.3989, -23.6339), 4326), 0.01)),
 
 -- Puerto Montt
-('Reparación Costanera', 'Mantención de borde costero', ST_SetSRID(ST_MakePoint(-72.9439, -41.4717), 4326)),
-('Sector Pesquero', 'Área de procesamiento pesquero', ST_SetSRID(ST_MakePoint(-72.9364, -41.4686), 4326));
-
-
+('Reparación Costanera', 'Mantención de borde costero', ST_Buffer(ST_SetSRID(ST_MakePoint(-72.9439, -41.4717), 4326), 0.01)),
+('Sector Pesquero', 'Área de procesamiento pesquero', ST_Buffer(ST_SetSRID(ST_MakePoint(-72.9364, -41.4686), 4326), 0.01));
 
 -- Insertar tareas para usuarios en diferentes sectores
 INSERT INTO public.tareas (
@@ -138,14 +136,14 @@ INSERT INTO public.tareas (
     ST_GeomFromText('POINT(-70.5755 -33.4125)', 4326)
 ),
 
--- Tareas para Carlos Rojas (Valparaíso - Reparación Muelles)
+-- Tareas para María González (Valparaíso - Reparación Muelles)
 (
     'Reparación Muelle 1', 
     'Cambio de tablones deteriorados', 
     'PENDIENTE', 
     CURRENT_DATE + INTERVAL '10 days', 
     (SELECT idsector FROM sectores WHERE nombre LIKE '%Muelles%' LIMIT 1),
-    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'Carlos Rojas' LIMIT 1),
+    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'María González' LIMIT 1),
     ST_GeomFromText('POINT(-71.6220 -33.0440)', 4326)  -- Muelle Barón
 ),
 (
@@ -154,31 +152,30 @@ INSERT INTO public.tareas (
     'EN PROGRESO', 
     CURRENT_DATE + INTERVAL '20 days', 
     (SELECT idsector FROM sectores WHERE nombre LIKE '%Muelles%' LIMIT 1),
-    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'Carlos Rojas' LIMIT 1),
+    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'María González' LIMIT 1),
     ST_GeomFromText('POINT(-71.6180 -33.0460)', 4326)
 ),
 
--- Tareas para Ana Silva (Concepción - Construcción Edificios)
+-- Tareas para María González (Concepción - Construcción Edificios)
 (
     'Cimentación Edificio B', 
     'Excavación y hormigonado de cimientos', 
     'PENDIENTE', 
     CURRENT_DATE + INTERVAL '30 days', 
     (SELECT idsector FROM sectores WHERE nombre LIKE '%Edificios%' LIMIT 1),
-    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'Ana Silva' LIMIT 1),
+    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'María González' LIMIT 1),
     ST_GeomFromText('POINT(-73.0500 -36.8250)', 4326)  -- Centro Concepción
 ),
 
--- Tareas para Pedro Martínez (Antofagasta - Mantención Minera)
+-- Tareas para María González (Antofagasta - Mantención Minera)
 (
     'Reparación Cinta Transportadora', 
     'Mantención preventiva sistema de transporte', 
     'PENDIENTE', 
     CURRENT_DATE + INTERVAL '5 days', 
     (SELECT idsector FROM sectores WHERE nombre LIKE '%Minera%' LIMIT 1),
-    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'Pedro Martínez' LIMIT 1),
+    (SELECT idusuario FROM usuarios WHERE nombreusuario = 'María González' LIMIT 1),
     ST_GeomFromText('POINT(-70.4000 -23.6350)', 4326)  -- Cerca de puerto
 );
-
 
 
